@@ -1,16 +1,20 @@
 
 #header_section {
     box-sizing: border-box;
-    height: 15vh;
+    height: 20vh;
     width: 100vw;
     background-color: lightcyan;
     display: flex;
     justify-content: space-around;
     align-items: center;
 }
+.links {
+    display: flex;
+    flex-direction: column;
+}
 main {
     box-sizing: border-box;
-    height: 85vh;
+    height: 80vh;
     width: 100vw;
     background-color: gray;
     display: flex;
@@ -19,7 +23,7 @@ main {
     align-items: center;
 }
 
-#stats_section {
+#stats_section,.contact-section {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -30,8 +34,9 @@ main {
 }
 
 .game-area {
-    height: 90%;
+    height: 95%;
     width: 60%;
+    align-self: flex-start;
     background-image: url("images/texture_bedrock.png");
     background-repeat: repeat;
     background-size: 16.6%;
@@ -43,11 +48,20 @@ main {
     overflow: scroll;
 
 }
+.profile-area {
+    height: 90%;
+    width: 60%;
+    background-image: url("images/texture_bedrock.png");
+    background-repeat: repeat;
+    background-size: 16.6%;
+}
 
 .card {
     flex: 0 0 auto;
     position: relative;
     width: 16.6%;
+    background-image: url("images/texture_bedrock.png");
+    background-size: 100%;
 }
 
 .front {
