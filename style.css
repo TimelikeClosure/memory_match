@@ -20,6 +20,10 @@ main {
 }
 
 #stats_section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
     height: 90%;
     width: 20%;
     background-color: lawngreen;
@@ -28,11 +32,14 @@ main {
 .game-area {
     height: 90%;
     width: 60%;
-    background-color: black;
+    background-image: url("images/texture_bedrock.png");
+    background-repeat: repeat;
+    background-size: 16.6%;
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
     align-items: flex-start;
+    align-content: flex-start;
 
 }
 
