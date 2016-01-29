@@ -16,7 +16,7 @@ main {
     box-sizing: border-box;
     height: 80vh;
     width: 100vw;
-    background-color: gray;
+    background-color: #725A40;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -30,10 +30,10 @@ main {
     align-items: stretch;
     height: 90%;
     width: 20%;
-    background-color: lawngreen;
+    background-color: gray;
 }
 
-.game-area {
+#game-area {
     height: 95%;
     width: 60%;
     align-self: flex-start;
@@ -65,30 +65,59 @@ main {
 }
 
 .front {
-    position: absolute;
-    top: 0;
+    position: relative;
     width: 100%;
     height: 100%;
-    opacity: 0;
+    /*#opacity: 0;*/
 }
-.card:hover .front {
-    opacity: 1;
-}
+/*.card:active .front {
+    #transition-delay: 1s;
+    #opacity: 1;
+}*/
 .front>img {
     position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    /*#top: 50%;
+    #left: 50%;
+    #transform: translate(-50%, -50%);*/
     max-width: 100%;
     max-height: 100%;
 }
 .back {
+    position: absolute;
+    top: 0;
     width: 100%;
     opacity: 1;
 }
-.card:hover .back {
+.card:active .back {
+    transition-delay: 1s;
     opacity: 0;
 }
 .back>img {
     width: 100%;
+}
+@keyframes break-block {
+    0% {background-image: none;}
+    10%  {background-image: url(images/texture_break_0.png);}
+    20%  {background-image: url(images/texture_break_1.png);}
+    30%  {background-image: url(images/texture_break_2.png);}
+    40%  {background-image: url(images/texture_break_3.png);}
+    50%  {background-image: url(images/texture_break_4.png);}
+    60%  {background-image: url(images/texture_break_5.png);}
+    70%  {background-image: url(images/texture_break_6.png);}
+    80%  {background-image: url(images/texture_break_7.png);}
+    90%  {background-image: url(images/texture_break_8.png);}
+    100%  {background-image: url(images/texture_break_9.png);}
+}
+.back>div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-size: 100%;
+    background-image: none;
+}
+.card:active .back>div {
+    animation-name: break-block;
+    animation-duration: 1s;
 }
