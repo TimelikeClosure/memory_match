@@ -1,4 +1,6 @@
 
+/*Header Section - All Pages*/
+
 #header_section {
     box-sizing: border-box;
     height: 20vh;
@@ -12,6 +14,9 @@
     display: flex;
     flex-direction: column;
 }
+
+/*Main Section - All Pages*/
+
 main {
     box-sizing: border-box;
     height: 80vh;
@@ -32,10 +37,8 @@ main {
     width: 20%;
     background-color: gray;
 }
-.contact-section,.contact-section a {
-    color: white;
-    text-decoration: none;
-}
+
+/*Game Area - index.html*/
 
 #game-area {
     height: 95%;
@@ -50,49 +53,42 @@ main {
     align-items: flex-start;
     align-content: flex-start;
     overflow: scroll;
-
+    -webkit-user-select: none;
+    user-select: none;
 }
-.profile-area {
-    height: 90%;
-    width: 60%;
-    background-color: black;
-    color: white;
-    padding: 20px 40px;
-}
-
 .card {
     flex: 0 0 auto;
     position: relative;
     width: 16.6%;
     background-image: url("images/texture_bedrock.png");
     background-size: 100%;
+    user-select: none;
 }
 
 .front {
     position: relative;
     width: 100%;
     height: 100%;
-    /*#opacity: 0;*/
+    -webkit-user-select: none;
+    user-select: none;
 }
-/*.card:active .front {
-    #transition-delay: 1s;
-    #opacity: 1;
-}*/
 .front>img {
     position: relative;
-    /*#top: 50%;
-    #left: 50%;
-    #transform: translate(-50%, -50%);*/
     max-width: 100%;
     max-height: 100%;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .back {
     position: absolute;
     top: 0;
     width: 100%;
     opacity: 1;
+    transition-delay: 0.01s;
+    -webkit-user-select: none;
+    user-select: none;
 }
-.card:active .back {
+.card:hover:active .back {
     transition-delay: 1s;
     opacity: 0;
 }
@@ -120,12 +116,30 @@ main {
     width: 100%;
     background-size: 100%;
     background-image: none;
+    z-index: 2;
 }
-.card:active .back>div {
+.card:hover:active .back>div {
     animation-name: break-block;
     animation-duration: 1s;
 }
 
+
+/*Contact Section - about.html*/
+
+.contact-section,.contact-section a {
+    color: white;
+    text-decoration: none;
+}
+
+/*Profile Section - about.html*/
+
+.profile-section {
+    height: 90%;
+    width: 60%;
+    background-color: black;
+    color: white;
+    padding: 20px 40px;
+}
 .left-figure {
     float: left;
     margin: 20px 40px 10px 0;
@@ -140,6 +154,6 @@ main {
     border-top: 1px solid black;
     padding: 5px;
 }
-.profile-area article {
+.profile-section article {
     float: none;
 }
