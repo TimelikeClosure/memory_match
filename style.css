@@ -32,6 +32,10 @@ main {
     width: 20%;
     background-color: gray;
 }
+.contact-section,.contact-section a {
+    color: white;
+    text-decoration: none;
+}
 
 #game-area {
     height: 95%;
@@ -51,9 +55,9 @@ main {
 .profile-area {
     height: 90%;
     width: 60%;
-    background-image: url("images/texture_bedrock.png");
-    background-repeat: repeat;
-    background-size: 16.6%;
+    background-color: black;
+    color: white;
+    padding: 20px 40px;
 }
 
 .card {
@@ -120,4 +124,22 @@ main {
 .card:active .back>div {
     animation-name: break-block;
     animation-duration: 1s;
+}
+
+.left-figure {
+    float: left;
+    margin: 20px 40px 10px 0;
+    border: 1px inset black;
+}
+.portrait {
+    height: 345px;
+    display: block;
+}
+.left-figure figcaption {
+    text-indent: 1em;
+    border-top: 1px solid black;
+    padding: 5px;
+}
+.profile-area article {
+    float: none;
 }
