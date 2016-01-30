@@ -13,104 +13,129 @@ var game_param = {
 var card_data = {
     front: {
         armor_chain: {
+            name: 'armor_chain',
             src: 'images/item_armor_chain.png',
             match: 'self'
         },
         armor_diamond: {
+            name: 'armor_diamond',
             src: 'images/item_armor_diamond.png',
             match: 'self'
         },
         armor_gold: {
+            name: 'armor_gold',
             src: 'images/item_armor_gold.png',
             match: 'self'
         },
         armor_iron: {
+            name: 'armor_iron',
             src: 'images/item_armor_iron.png',
             match: 'self'
         },
         armor_leather: {
+            name: 'armor_leather',
             src: 'images/item_armor_leather.png',
             match: 'self'
         },
         armor_none: {
+            name: 'armor_none',
             src: 'images/item_armor_none.png',
             match: 'self'
         },
         fluid_lava: {
-            src: 'images/item_fluid_lava.png',
+            name: 'fluid_lava',
+            src: 'images/item_fluid_lava.gif',
             match: 'fluid_water'
         },
         fluid_water: {
-            src: 'images/item_fluid_water.png',
+            name: 'fluid_water',
+            src: 'images/item_fluid_water.gif',
             match: 'fluid_lava'
         },
         pickaxe_diamond: {
+            name: 'pickaxe_diamond',
             src: 'images/item_pickaxe_diamond.png',
             match: 'self'
         },
         pickaxe_gold: {
+            name: 'pickaxe_gold',
             src: 'images/item_pickaxe_gold.png',
             match: 'self'
         },
         pickaxe_iron: {
+            name: 'pickaxe_iron',
             src: 'images/item_pickaxe_iron.png',
             match: 'self'
         },
         pickaxe_stone: {
+            name: 'pickaxe_stone',
             src: 'images/item_pickaxe_stone.png',
             match: 'self'
         },
         pickaxe_wooden: {
+            name: 'pickaxe_wooden',
             src: 'images/item_pickaxe_wooden.png',
             match: 'self'
         },
         sword_diamond: {
+            name: 'sword_diamond',
             src: 'images/item_sword_diamond.png',
             match: 'self'
         },
         sword_gold: {
+            name: 'sword_gold',
             src: 'images/item_sword_gold.png',
             match: 'self'
         },
         sword_iron: {
+            name: 'sword_iron',
             src: 'images/item_sword_iron.png',
             match: 'self'
         },
         sword_stone: {
+            name: 'sword_stone',
             src: 'images/item_sword_stone.png',
             match: 'self'
         },
         sword_wooden: {
+            name: 'sword_wooden',
             src: 'images/item_sword_wooden.png',
             match: 'self'
         }
     },
     back: {
         grass: {
+            name: 'grass',
             src: 'images/texture_block_grass.png',
             depth: 0
         },
         dirt: {
+            name: 'dirt',
             src: 'images/texture_block_dirt.png',
             depth: 1
         },
         stone: {
+            name: 'stone',
             src: 'images/texture_block_stone.png',
             depth: 2
         },
         coal_ore: {
+            name: 'coal_ore',
             src: 'images/texture_block_coal_ore.png',
             depth: 3
         },
         iron_ore: {
+            name: 'iron_ore',
             src: 'images/texture_block_iron_ore.png',
             depth: 0
         },
         gold_ore: {
+            name: 'gold_ore',
             src: 'images/texture_block_gold_ore.png',
             depth: 0
         },
         diamond_ore: {
+            name: 'diamond_ore',
             src: 'images/texture_block_diamond_ore.png',
             depth: 0
         }
@@ -313,13 +338,42 @@ function clearCards(flippedCards) {
     return null;
 }
 
-function checkMatchConditionsMet(flippedCards) {
+/**
+ * Takes a $('.card') element and returns its card properties. Returns null if not found.
+ * @param {Object} card
+ * @param {string} face "front" or "back"
+ * @returns {Object|null} list of data properties for the given card's type, null if not found
+ */
+function getCardDataFromCard (card, face) {
 
+    var cardSrc = $(card).find('.'+face+'>img').attr('src');
+    for (var cardType in card_data[face]) {
+        if(card_data[face].hasOwnProperty(cardType)) {
+            if (cardSrc == card_data[face][cardType].src) {
+                return card_data[face][cardType];
+            }
+        }
+    }
+    return null;
+}
+
+function checkMatchConditionsMet(flippedCardData) {
+    console.log('flippedCardData[0].match : ', flippedCardData[0].match);
+    console.log('flippedCardData[1].name : ', flippedCardData[1].name);
+    console.log('flippedCardData[1].match : ', flippedCardData[1].match);
+    console.log('flippedCardData[0].name : ', flippedCardData[0].name);
+    if (flippedCardData[0].match == 'self' && flippedCardData[1].match == 'self') {
+        if (flippedCardData[0].name != flippedCardData[1].name) {
+            return false;
+        }
+    } else if (flippedCardData[0].match != flippedCardData[1].name || flippedCardData[1].match != flippedCardData[0].name) {
+        return false;
+    }
 
     return true;
 }
 
-function applyMatchConsequences (flippedCards) {
+function applyMatchConsequences (flippedCardData) {
     return null;
 }
 
@@ -340,7 +394,9 @@ function gameWon() {
 }
 
 function matchingRound (card) {
+    //  Prevent card flipping while matching is in progress
     freezeFlips(true);
+    //  Flip the card and check if there are enough to match
     flipCard(card);
     var flippedCards = getFlippedCards();
     if (flippedCards.length < 2) {
@@ -350,11 +406,16 @@ function matchingRound (card) {
         unflipCards(flippedCards);
         return freezeFlips(false);
     }
-    if (!checkMatchConditionsMet(flippedCards)) {
+    var flippedCardData = [];
+    for (var i = 0; i < flippedCards.length; i++) {
+        flippedCardData.push(getCardDataFromCard(flippedCards[i], 'front'));
+    }
+    console.log('flippedCardData : ', flippedCardData);
+    if (!checkMatchConditionsMet(flippedCardData)) {
         unflipCards(flippedCards);
         return freezeFlips(false);
     }
-    applyMatchConsequences(flippedCards);
+    applyMatchConsequences(flippedCardData);
     if (checkFailureConditions()) {
         gameLost();
         return freezeFlips(true);
