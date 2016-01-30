@@ -8,6 +8,117 @@ var game_param = {
 
 //  Close Game Global Parameters
 
+//  Begin Card Data List
+
+var card_data = {
+    front: {
+        armor_chain: {
+            src: 'images/item_armor_chain.png',
+            match: 'self'
+        },
+        armor_diamond: {
+            src: 'images/item_armor_diamond.png',
+            match: 'self'
+        },
+        armor_gold: {
+            src: 'images/item_armor_gold.png',
+            match: 'self'
+        },
+        armor_iron: {
+            src: 'images/item_armor_iron.png',
+            match: 'self'
+        },
+        armor_leather: {
+            src: 'images/item_armor_leather.png',
+            match: 'self'
+        },
+        armor_none: {
+            src: 'images/item_armor_none.png',
+            match: 'self'
+        },
+        fluid_lava: {
+            src: 'images/item_fluid_lava.png',
+            match: 'fluid_water'
+        },
+        fluid_water: {
+            src: 'images/item_fluid_water.png',
+            match: 'fluid_lava'
+        },
+        pickaxe_diamond: {
+            src: 'images/item_pickaxe_diamond.png',
+            match: 'self'
+        },
+        pickaxe_gold: {
+            src: 'images/item_pickaxe_gold.png',
+            match: 'self'
+        },
+        pickaxe_iron: {
+            src: 'images/item_pickaxe_iron.png',
+            match: 'self'
+        },
+        pickaxe_stone: {
+            src: 'images/item_pickaxe_stone.png',
+            match: 'self'
+        },
+        pickaxe_wooden: {
+            src: 'images/item_pickaxe_wooden.png',
+            match: 'self'
+        },
+        sword_diamond: {
+            src: 'images/item_sword_diamond.png',
+            match: 'self'
+        },
+        sword_gold: {
+            src: 'images/item_sword_gold.png',
+            match: 'self'
+        },
+        sword_iron: {
+            src: 'images/item_sword_iron.png',
+            match: 'self'
+        },
+        sword_stone: {
+            src: 'images/item_sword_stone.png',
+            match: 'self'
+        },
+        sword_wooden: {
+            src: 'images/item_sword_wooden.png',
+            match: 'self'
+        }
+    },
+    back: {
+        grass: {
+            src: 'images/texture_block_grass.png',
+            depth: 0
+        },
+        dirt: {
+            src: 'images/texture_block_dirt.png',
+            depth: 1
+        },
+        stone: {
+            src: 'images/texture_block_stone.png',
+            depth: 2
+        },
+        coal_ore: {
+            src: 'images/texture_block_coal_ore.png',
+            depth: 3
+        },
+        iron_ore: {
+            src: 'images/texture_block_iron_ore.png',
+            depth: 0
+        },
+        gold_ore: {
+            src: 'images/texture_block_gold_ore.png',
+            depth: 0
+        },
+        diamond_ore: {
+            src: 'images/texture_block_diamond_ore.png',
+            depth: 0
+        }
+    }
+};
+
+//  Close Card Data List
+
 //  Begin Function Definitions
 
 /**
@@ -203,9 +314,8 @@ function clearCards(flippedCards) {
 }
 
 function checkMatchConditionsMet(flippedCards) {
-    if (flippedCards.length < 2) {
-        return false;
-    }
+
+
     return true;
 }
 
@@ -234,6 +344,10 @@ function matchingRound (card) {
     flipCard(card);
     var flippedCards = getFlippedCards();
     if (flippedCards.length < 2) {
+        return freezeFlips(false);
+    } else if (flippedCards.length > 2) {
+        console.log("Too many cards flipped");
+        unflipCards(flippedCards);
         return freezeFlips(false);
     }
     if (!checkMatchConditionsMet(flippedCards)) {

@@ -44,9 +44,9 @@ main {
     height: 95%;
     width: 60%;
     align-self: flex-start;
-    background-image: url("images/texture_bedrock.png");
+    /*background-image: url("images/texture_bedrock.png");
     background-repeat: repeat;
-    background-size: 16.6%;
+    background-size: 16.6%;*/
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
@@ -127,9 +127,6 @@ main {
 }
 .card.flipped .back {
     display: none;
-}
-.card.cleared {
-    visibility: hidden;
 }
 
 /*Contact Section - about.html*/
