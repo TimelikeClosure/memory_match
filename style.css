@@ -79,6 +79,9 @@ main {
     -webkit-user-select: none;
     user-select: none;
 }
+.card.cleared .front {
+    visibility: hidden;
+}
 .back {
     position: absolute;
     top: 0;
@@ -88,7 +91,7 @@ main {
     -webkit-user-select: none;
     user-select: none;
 }
-.card:hover:active .back {
+.card.breakable:hover:active .back {
     transition-delay: 1s;
     opacity: 0;
 }
@@ -118,7 +121,7 @@ main {
     background-image: none;
     z-index: 2;
 }
-.card:hover:active .back>div {
+.card.breakable:hover:active .back>div {
     animation-name: break-block;
     animation-duration: 1s;
 }
