@@ -1,9 +1,14 @@
 
-//  Game board global parameters
-var game_board = {
+//  Begin Game Global Parameters
+
+var game_param = {
     rows : 4,
     columns: 6
 };
+
+//  Close Game Global Parameters
+
+//  Begin Function Definitions
 
 /**
  * Checks if the given index is a legal board index
@@ -11,8 +16,8 @@ var game_board = {
  * @returns {boolean} true if index is a valid card index, false otherwise
  */
 function checkValidIndex(index) {
-    var rows = game_board.rows;
-    var columns = game_board.columns;
+    var rows = game_param.rows;
+    var columns = game_param.columns;
     return (index >= 0 && index < rows * columns);
 }
 
@@ -22,8 +27,8 @@ function checkValidIndex(index) {
  * @returns {boolean} true if position is legal, false otherwise
  */
 function checkValidPosition(position) {
-    var rows = game_board.rows;
-    var columns = game_board.columns;
+    var rows = game_param.rows;
+    var columns = game_param.columns;
     if (position[0] >= 0 && position[0] < columns && position[1] >=0 && position[1] < rows) {
         return true;
     }
@@ -36,8 +41,8 @@ function checkValidPosition(position) {
  * @returns {null|Array} array of zero-based column and row positions
  */
 function getPositionFromIndex(index) {
-    var rows = game_board.rows;
-    var columns = game_board.columns;
+    var rows = game_param.rows;
+    var columns = game_param.columns;
     if (!checkValidIndex(index)) {
         return null;
     }
@@ -53,7 +58,7 @@ function getPositionFromIndex(index) {
  * @returns {number|null} index number if position is valid, null otherwise
  */
 function getIndexFromPosition(position) {
-    var columns = game_board.columns;
+    var columns = game_param.columns;
     if (checkValidPosition(position)) {
         return position[0] + columns * position[1];
     }
@@ -136,32 +141,138 @@ function checkBreakable(card) {
     return false;
 }
 
+/**
+ * If the given card back is transparent, returns true, otherwise false.
+ * @param {Object} cardBack
+ * @returns {boolean} true if cardBack is transparent, false otherwise
+ */
+function checkCardBackInvisible(cardBack) {
+    return (cardBack.css('opacity') == 0);
+}
 
-function hideCardBackIfInvisible(cardBack) {
-    if (cardBack.css('opacity') == 0) {
-        cardBack.hide();
-        var card = cardBack.parent();
-        flipCard(card);
+/**
+ * Sets the game area to stop or start allowing card flips
+ * @param condition
+ * @returns {null}
+ */
+function freezeFlips(condition) {
+    if (condition) {
+        $('#game-area').addClass('freeze-flips');
+    } else {
+        $('#game-area').removeClass('freeze-flips');
     }
+    return null;
 }
 
-function flipCard(card){
-
+/**
+ * Returns the set of all non-cleared face up cards
+ * @returns {Object|jQuery|HTMLElement}
+ */
+function getFlippedCards() {
+    return $('.flipped:not(.cleared)');
 }
+
+/**
+ * Flips the given card face up.
+ * @param card
+ * @returns {null}
+ */
+function flipCard(card) {
+    card.addClass('flipped');
+    return null;
+}
+
+/**
+ * Flips the given set of cards face down.
+ * @param flippedCards
+ * @returns {null}
+ */
+function unflipCards(flippedCards) {
+    flippedCards.removeClass('flipped');
+    return null;
+}
+
+/**
+ * Clears the given set of cards.
+ * @param flippedCards
+ * @returns {null}
+ */
+function clearCards(flippedCards) {
+    flippedCards.addClass('cleared');
+    return null;
+}
+
+function checkMatchConditionsMet(flippedCards) {
+    if (flippedCards.length < 2) {
+        return false;
+    }
+    return true;
+}
+
+function applyMatchConsequences (flippedCards) {
+    return null;
+}
+
+function checkFailureConditions () {
+    return false;
+}
+
+function checkWinConditions () {
+    return false;
+}
+
+function gameLost() {
+    return null;
+}
+
+function gameWon() {
+    return null;
+}
+
+function matchingRound (card) {
+    freezeFlips(true);
+    flipCard(card);
+    var flippedCards = getFlippedCards();
+    if (flippedCards.length < 2) {
+        return freezeFlips(false);
+    }
+    if (!checkMatchConditionsMet(flippedCards)) {
+        unflipCards(flippedCards);
+        return freezeFlips(false);
+    }
+    applyMatchConsequences(flippedCards);
+    if (checkFailureConditions()) {
+        gameLost();
+        return freezeFlips(true);
+    }
+    clearCards(flippedCards);
+    if (checkWinConditions()) {
+        gameWon();
+        return freezeFlips(true);
+    }
+    return freezeFlips(false);
+}
+
+//  Close Function Definitions
+
+//  Begin Document Ready Section
 
 $(document).ready(function(){
     $('.card,.card img').attr({'draggable': 'false'});
 
     $('.card:not(.breakable):not(.cleared)').on('mouseenter','.back',function(){
-        var breakable = checkBreakable($(this).parent());
-        if (breakable) {
+        if (checkBreakable($(this).parent())) {
             $(this).parent().addClass('breakable');
         }
     });
     $('#game-area').on('mouseup','.card.breakable .back',function(){
-        hideCardBackIfInvisible($(this));
+        if(checkCardBackInvisible($(this))) {
+            matchingRound($(this).parent());
+        }
     });
     $('#game-area').on('mouseleave','.card.breakable .back',function(){
-        hideCardBackIfInvisible($(this));
+        $(this).trigger('mouseup');
     });
 });
+
+//  Close Document Ready Section

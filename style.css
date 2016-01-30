@@ -121,11 +121,16 @@ main {
     background-image: none;
     z-index: 2;
 }
-.card.breakable:hover:active .back>div {
+#game-area:not(.freeze-flips) .card.breakable:hover:active .back>div {
     animation-name: break-block;
     animation-duration: 1s;
 }
-
+.card.flipped .back {
+    display: none;
+}
+.card.cleared {
+    visibility: hidden;
+}
 
 /*Contact Section - about.html*/
 
