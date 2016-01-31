@@ -102,7 +102,7 @@ main.win .card,main.lose .card {
     -webkit-user-select: none;
     user-select: none;
 }
-.card.breakable:hover:active .back {
+#game-area:not(.freeze-flips) .card.breakable:hover:active .back {
     transition-delay: 1s;
     opacity: 0;
 }
@@ -136,7 +136,7 @@ main.win .card,main.lose .card {
     animation-name: break-block;
     animation-duration: 1s;
 }
-.card.flipped .back {
+.card.flipped .back,.card.cleared .back {
     display: none;
 }
 .game-message {
