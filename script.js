@@ -3,7 +3,9 @@
 
 var game_param = {
     rows : 4,
-    columns: 6
+    columns: 6,
+    total_matches: 12,
+    current_matches: 0
 };
 
 //  Close Game Global Parameters
@@ -357,11 +359,13 @@ function getCardDataFromCard (card, face) {
     return null;
 }
 
+/**
+ * Returns whether the given card data meets all the conditions to be matched.
+ * @param {Array} flippedCardData
+ * @returns {boolean} true if cards can be legally matched, false otherwise
+ */
 function checkMatchConditionsMet(flippedCardData) {
-    console.log('flippedCardData[0].match : ', flippedCardData[0].match);
-    console.log('flippedCardData[1].name : ', flippedCardData[1].name);
-    console.log('flippedCardData[1].match : ', flippedCardData[1].match);
-    console.log('flippedCardData[0].name : ', flippedCardData[0].name);
+    //  Checks whether cards are compatible for matching
     if (flippedCardData[0].match == 'self' && flippedCardData[1].match == 'self') {
         if (flippedCardData[0].name != flippedCardData[1].name) {
             return false;
@@ -369,11 +373,15 @@ function checkMatchConditionsMet(flippedCardData) {
     } else if (flippedCardData[0].match != flippedCardData[1].name || flippedCardData[1].match != flippedCardData[0].name) {
         return false;
     }
+    //  Checks whether cards can be matched based upon outside requirements, specific to card type
+    //  (to be added)
 
+    //  Returns true if all conditions are met
     return true;
 }
 
 function applyMatchConsequences (flippedCardData) {
+    game_param.current_matches++;
     return null;
 }
 
@@ -382,14 +390,21 @@ function checkFailureConditions () {
 }
 
 function checkWinConditions () {
-    return false;
+    if (game_param.current_matches != game_param.total_matches) {
+        return false;
+    }
+    return true;
 }
 
 function gameLost() {
+    $('main').addClass('lose');
+    $('.game-message').text('You Lose!');
     return null;
 }
 
 function gameWon() {
+    $('main').addClass('win');
+    $('.game-message').text('You Win!');
     return null;
 }
 
@@ -410,7 +425,6 @@ function matchingRound (card) {
     for (var i = 0; i < flippedCards.length; i++) {
         flippedCardData.push(getCardDataFromCard(flippedCards[i], 'front'));
     }
-    console.log('flippedCardData : ', flippedCardData);
     if (!checkMatchConditionsMet(flippedCardData)) {
         unflipCards(flippedCards);
         return freezeFlips(false);
@@ -435,17 +449,17 @@ function matchingRound (card) {
 $(document).ready(function(){
     $('.card,.card img').attr({'draggable': 'false'});
 
-    $('.card:not(.breakable):not(.cleared)').on('mouseenter','.back',function(){
+    $('#game-area').on('mouseenter','.card:not(.breakable):not(.cleared) .back',function(){
         if (checkBreakable($(this).parent())) {
             $(this).parent().addClass('breakable');
         }
     });
-    $('#game-area').on('mouseup','.card.breakable .back',function(){
+    $('#game-area').on('mouseup','.card.breakable:not(.cleared) .back',function(){
         if(checkCardBackInvisible($(this))) {
             matchingRound($(this).parent());
         }
     });
-    $('#game-area').on('mouseleave','.card.breakable .back',function(){
+    $('#game-area').on('mouseleave','.card.breakable:not(.cleared) .back',function(){
         $(this).trigger('mouseup');
     });
 });
