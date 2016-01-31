@@ -385,10 +385,18 @@ function applyMatchConsequences (flippedCardData) {
     return null;
 }
 
+/**
+ * Checks whether any conditions for game failure have been satisfied.
+ * @returns {boolean} true if conditions for game failure satisfied, false otherwise
+ */
 function checkFailureConditions () {
     return false;
 }
 
+/**
+ * Checks whether all conditions for game success have been satisfied.
+ * @returns {boolean} true if all conditions are met, false otherwise
+ */
 function checkWinConditions () {
     if (game_param.current_matches != game_param.total_matches) {
         return false;
@@ -396,31 +404,49 @@ function checkWinConditions () {
     return true;
 }
 
+/**
+ * Runs game loss procedures.
+ * @returns {null}
+ */
 function gameLost() {
     $('main').addClass('lose');
     $('.game-message').text('You Lose!');
     return null;
 }
 
+/**
+ * Runs game win procedures.
+ * @returns {null}
+ */
 function gameWon() {
     $('main').addClass('win');
     $('.game-message').text('You Win!');
     return null;
 }
 
-function matchingRound (card) {
-    //  Prevent card flipping while matching is in progress
+/**
+ * Runs card flipping procedure. New cards cannot be flipped by user while running. Starts matching procedure after
+ * delay if at least two cards are flipped, otherwise returns flipping control to the user and returns null.
+ * @param {Object} card
+ * @returns {Object|null} reference of setTimeout function if matchingRound() is set to run, null otherwise
+ */
+function flippingRound (card) {
     freezeFlips(true);
-    //  Flip the card and check if there are enough to match
     flipCard(card);
     var flippedCards = getFlippedCards();
     if (flippedCards.length < 2) {
         return freezeFlips(false);
-    } else if (flippedCards.length > 2) {
-        console.log("Too many cards flipped");
-        unflipCards(flippedCards);
-        return freezeFlips(false);
     }
+    return setTimeout(function(){matchingRound(flippedCards);}, 2000);
+}
+
+/**
+ * Runs card matching procedure.  Activates win or loss procedures if conditions are met, otherwise returns flipping
+ * control to the user.
+ * @param flippedCards
+ * @returns {null}
+ */
+function matchingRound (flippedCards) {
     var flippedCardData = [];
     for (var i = 0; i < flippedCards.length; i++) {
         flippedCardData.push(getCardDataFromCard(flippedCards[i], 'front'));
@@ -431,12 +457,12 @@ function matchingRound (card) {
     }
     applyMatchConsequences(flippedCardData);
     if (checkFailureConditions()) {
-        gameLost();
+        setTimeout(function(){gameLost();},2000);
         return freezeFlips(true);
     }
     clearCards(flippedCards);
     if (checkWinConditions()) {
-        gameWon();
+        setTimeout(function(){gameWon();},2000);
         return freezeFlips(true);
     }
     return freezeFlips(false);
@@ -454,9 +480,12 @@ $(document).ready(function(){
             $(this).parent().addClass('breakable');
         }
     });
+    $('#game-area').on('mousedown','.card:not(.breakable):not(.cleared) .back',function(){
+        $(this).trigger('mouseenter');
+    });
     $('#game-area').on('mouseup','.card.breakable:not(.cleared) .back',function(){
         if(checkCardBackInvisible($(this))) {
-            matchingRound($(this).parent());
+            flippingRound($(this).parent());
         }
     });
     $('#game-area').on('mouseleave','.card.breakable:not(.cleared) .back',function(){
