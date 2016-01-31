@@ -17,91 +17,109 @@ var card_data = {
         armor_chain: {
             name: 'armor_chain',
             src: 'images/item_armor_chain.png',
+            alt: 'Chain Armor',
             match: 'self'
         },
         armor_diamond: {
             name: 'armor_diamond',
             src: 'images/item_armor_diamond.png',
+            alt: 'Diamond Armor',
             match: 'self'
         },
         armor_gold: {
             name: 'armor_gold',
             src: 'images/item_armor_gold.png',
+            alt: 'Gold Armor',
             match: 'self'
         },
         armor_iron: {
             name: 'armor_iron',
             src: 'images/item_armor_iron.png',
+            alt: 'Iron Armor',
             match: 'self'
         },
         armor_leather: {
             name: 'armor_leather',
             src: 'images/item_armor_leather.png',
+            alt: 'Leather Armor',
             match: 'self'
         },
         armor_none: {
             name: 'armor_none',
             src: 'images/item_armor_none.png',
+            alt: 'No Armor',
             match: 'self'
         },
         fluid_lava: {
             name: 'fluid_lava',
             src: 'images/item_fluid_lava.gif',
+            alt: 'Lava Source',
             match: 'fluid_water'
         },
         fluid_water: {
             name: 'fluid_water',
             src: 'images/item_fluid_water.gif',
+            alt: 'Water Source',
             match: 'fluid_lava'
         },
         pickaxe_diamond: {
             name: 'pickaxe_diamond',
             src: 'images/item_pickaxe_diamond.png',
+            alt: 'Diamond Pickaxe',
             match: 'self'
         },
         pickaxe_gold: {
             name: 'pickaxe_gold',
             src: 'images/item_pickaxe_gold.png',
+            alt: 'Gold Pickaxe',
             match: 'self'
         },
         pickaxe_iron: {
             name: 'pickaxe_iron',
             src: 'images/item_pickaxe_iron.png',
+            alt: 'Iron Pickaxe',
             match: 'self'
         },
         pickaxe_stone: {
             name: 'pickaxe_stone',
             src: 'images/item_pickaxe_stone.png',
+            alt: 'Stone Pickaxe',
             match: 'self'
         },
         pickaxe_wooden: {
             name: 'pickaxe_wooden',
             src: 'images/item_pickaxe_wooden.png',
+            alt: 'Wooden Pickaxe',
             match: 'self'
         },
         sword_diamond: {
             name: 'sword_diamond',
             src: 'images/item_sword_diamond.png',
+            alt: 'Diamond Sword',
             match: 'self'
         },
         sword_gold: {
             name: 'sword_gold',
             src: 'images/item_sword_gold.png',
+            alt: 'Gold Sword',
             match: 'self'
         },
         sword_iron: {
             name: 'sword_iron',
             src: 'images/item_sword_iron.png',
+            alt: 'Iron Sword',
             match: 'self'
         },
         sword_stone: {
             name: 'sword_stone',
             src: 'images/item_sword_stone.png',
+            alt: 'Stone Sword',
             match: 'self'
         },
         sword_wooden: {
             name: 'sword_wooden',
             src: 'images/item_sword_wooden.png',
+            alt: 'Wooden Sword',
             match: 'self'
         }
     },
@@ -109,37 +127,44 @@ var card_data = {
         grass: {
             name: 'grass',
             src: 'images/texture_block_grass.png',
+            alt: 'Grass Block',
             depth: 0
         },
         dirt: {
             name: 'dirt',
             src: 'images/texture_block_dirt.png',
+            alt: 'Dirt Block',
             depth: 1
         },
         stone: {
             name: 'stone',
             src: 'images/texture_block_stone.png',
+            alt: 'Stone Block',
             depth: 2
         },
         coal_ore: {
             name: 'coal_ore',
             src: 'images/texture_block_coal_ore.png',
+            alt: 'Coal Ore Block',
             depth: 3
         },
         iron_ore: {
             name: 'iron_ore',
             src: 'images/texture_block_iron_ore.png',
-            depth: 0
+            alt: 'Iron Ore Block',
+            depth: 4
         },
         gold_ore: {
             name: 'gold_ore',
             src: 'images/texture_block_gold_ore.png',
-            depth: 0
+            alt: 'Gold Ore Block',
+            depth: 5
         },
         diamond_ore: {
             name: 'diamond_ore',
             src: 'images/texture_block_diamond_ore.png',
-            depth: 0
+            alt: 'Diamond Ore Block',
+            depth: 6
         }
     }
 };
@@ -216,31 +241,6 @@ function getCardFromIndex(index) {
 }
 
 /**
- * Returns the column and row for a card
- * @param {number|Object} card
- * @returns {Array} array of zero-based column and row positions
- */
-function getPositionFromCard(card) {
-    //  Get index from card
-    var index = card.index();
-    //  Get position from index
-    return getPositionFromIndex(index);
-}
-
-/**
- * Returns jQuery card selector. If the position is invalid, returns null.
- * @param {Array} position
- * @returns {Object|null} card selector object if position is valid, null otherwise
- */
-function getCardFromPosition (position) {
-    var index = getIndexFromPosition(position);
-    if (index === null) {
-        return null;
-    }
-    return getCardFromIndex(index);
-}
-
-/**
  * Returns the set of all positions adjacent to the given position, which are on the game board
  * @param {Array} position
  * @returns {Array} array of positions
@@ -265,13 +265,13 @@ function getValidNeighbors(position) {
  * @returns {boolean} True if card is breakable, false otherwise.
  */
 function checkBreakable(card) {
-    var position = getPositionFromCard(card);
+    var position = getPositionFromIndex(card.index());
     if (position[1] == 0) {
         return true;
     }
     var neighbors = getValidNeighbors(position);
     for (var i=0; i<neighbors.length; i++) {
-        var neighborCard = getCardFromPosition(neighbors[i]);
+        var neighborCard = getCardFromIndex(getIndexFromPosition(neighbors[i]));
         if (neighborCard.hasClass('cleared')){
             return true;
         }
