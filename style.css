@@ -28,6 +28,7 @@
 /*Main Section - All Pages*/
 
 main {
+    position: relative;
     box-sizing: border-box;
     height: 80vh;
     width: 100vw;
@@ -39,11 +40,26 @@ main {
     justify-content: space-around;
     align-items: center;
 }
-main.lose {
-    background-image: url(images/surrounded_by_endermen.jpg);
+main::before {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    opacity: 0;
 }
-main.win {
+main.lose::before {
+    background-image: url(images/surrounded_by_endermen.jpg);
+    opacity: 1;
+    transition-duration: 1s;
+}
+main.win::before {
     background-image: url(images/raining_diamonds.jpg);
+    opacity: 1;
+    transition-duration: 1s;
 }
 
 #stats_section,.contact-section {
@@ -54,6 +70,7 @@ main.win {
     height: 90%;
     width: 20%;
     background-color: gray;
+    z-index: 0;
 }
 
 /*Game Area - index.html*/
