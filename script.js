@@ -1,4 +1,3 @@
-
 //  Begin Game Global Parameters
 
 var game_param = {
