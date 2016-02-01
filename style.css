@@ -7,10 +7,20 @@
     width: 100vw;
     background-color: lightcyan;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
+.game-logo {
+    width: 25%;
+}
+.game-logo img {
+    width: 100%;
+}
+.game-title {
+    width: 15%;
+}
 .links {
+    width: 25%;
     display: flex;
     flex-direction: column;
 }
@@ -146,15 +156,18 @@ main.win .card,main.lose .card {
     left: 0;
     height: 100%;
     width: 100%;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    font-size: 80px;
-    color: red;
-    text-shadow: 0 0 5px blue;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 main.lose .game-message,main.win .game-message {
-    display: flex;
+    display: block;
+}
+main.lose .game-message {
+    background-image: url(images/game_lose.png);
+}
+
+main.win .game-message {
+    background-image: url(images/game_win.png);
 }
 
 
