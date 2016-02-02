@@ -60,10 +60,10 @@
         - Every time a user attempts a match (clicks the 2nd card) the attempts should be incremented by 1
     - Declare a global variable, `accuracy`, and set it to 0
         - Accuracy is defined as a percentage of matches / attempts
-    - Declare a global variable, `games_played` and set it to 0
-        - When the page is loaded a new global variable should be defined called games_played. When the game is reset by clicking the reset button the games_played should be incremented by 1.
+    - Declare a global variable, `gamesPlayed` and set it to 0
+        - When the page is loaded a new global variable should be defined called gamesPlayed. When the game is reset by clicking the reset button the gamesPlayed should be incremented by 1.
     - Declare a function, `display_stats`, that has the following functionality
-        - Inserts the **games_played** value into the element that would be selected like this “.games-played .value”
+        - Inserts the **gamesPlayed** value into the element that would be selected like this “.games-played .value”
         - Insert **attempts** value into the element that would be selected using this selector “.attempts .value”
         - Formats **accuracy** to be a percentage number with the **%** sign
         - Takes formatted **accuracy** and inserts the value of the variable into the element that has the selector of “.accuracy .value”
@@ -73,7 +73,7 @@
         - Resets variable **attempts** to 0
         - Calls **display_stats** function
     - On **Reset button** click, the function handler for the click event should have the following functionality
-        - increment games_played by 1
+        - increment gamesPlayed by 1
         - call reset_stats
         - call display_stats
         - Reset all cards to have the back face showing
