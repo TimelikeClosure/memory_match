@@ -210,6 +210,22 @@ var gameHandler = {
         },
 
         /**
+         * Increments match attempt counter(s) and updates the statistics page.
+         * @param {string} matchAttemptType 'success' or 'failure'
+         * @returns {null}
+         */
+        addMatchAttempt: function(matchAttemptType) {
+            if (matchAttemptType == 'success') {
+                this.currentMatchAttempts++;
+                this.currentMatches++;
+            } else if (matchAttemptType == 'failure') {
+                this.currentMatchAttempts++;
+            }
+            this.updateStatDisplay();
+            return null;
+        },
+
+        /**
          * Checks if the given index is a legal board index
          * @param {number} index
          * @returns {boolean} true if index is a valid card index, false otherwise
@@ -376,8 +392,36 @@ var gameHandler = {
         clearCards: function(flippedCards) {
             flippedCards.addClass('cleared');
             return null;
-        }
+        },
 
+        /**
+         * Updates statistics panel with matches for current game.
+         */
+        updateStatDisplay: function() {
+            var currentMatchAccuracy = (100 * this.currentMatchAccuracy()).toFixed(2) + ' %';
+            var currentMatches = $('.current-matches .value');
+            currentMatches.html('');
+            currentMatches.append(
+                $('<table>').append(
+                    $('<tr>').append(
+                        $('<th>',{text: 'Attempted : '}),
+                        $('<th>',{text: this.currentMatchAttempts})
+                    ),
+                    $('<tr>').append(
+                        $('<td>',{text: 'Completed : '}),
+                        $('<td>',{text: this.currentMatches})
+                    ),
+                    $('<tr>').append(
+                        $('<td>',{text: 'Failed : '}),
+                        $('<td>',{text: this.currentMatchFailures()})
+                    ),
+                    $('<tr>').append(
+                        $('<th>',{text: 'Match Accuracy : '}),
+                        $('<th>',{text: currentMatchAccuracy})
+                    )
+                )
+            );
+        }
     },
     statistics: {
         matchAttempts: 0,
@@ -391,6 +435,23 @@ var gameHandler = {
             }
             return this.matchSuccesses / this.matchAttempts;
         },
+
+        /**
+         * Increments match attempt counter(s) and updates the statistics page.
+         * @param {string} matchAttemptType 'success' or 'failure'
+         * @returns {null}
+         */
+        addMatchAttempt: function(matchAttemptType) {
+            if (matchAttemptType == 'success') {
+                this.matchAttempts++;
+                this.matchSuccesses++;
+            } else if (matchAttemptType == 'failure') {
+                this.matchAttempts++;
+            }
+            this.updateStatDisplay('matches');
+            return null;
+        },
+
         gamesReset: 0,
         gamesWon: 0,
         gamesLost: 0,
@@ -487,6 +548,11 @@ var gameHandler = {
         }
     },
 
+    addMatchAttempt: function(matchAttemptType) {
+        this.currentGame.addMatchAttempt(matchAttemptType);
+        this.statistics.addMatchAttempt(matchAttemptType);
+    },
+
     /**
      * Returns whether the given card data meets all the conditions to be matched.
      * @param {Array} flippedCardData
@@ -509,12 +575,22 @@ var gameHandler = {
     },
 
     /**
+     * Applies the consequences of the currently mis-matched cards
+     * @param {Array} flippedCardData
+     * @returns {null}
+     */
+    applyNoMatchConsequences: function(flippedCardData) {
+        this.addMatchAttempt('failure');
+        return null;
+    },
+
+    /**
      * Applies the consequences of the currently matched cards
-     * @param flippedCardData
+     * @param {Array} flippedCardData
      * @returns {null}
      */
     applyMatchConsequences: function(flippedCardData) {
-        gameHandler.currentGame.currentMatches++;
+        this.addMatchAttempt('success');
         return null;
     },
 
@@ -525,11 +601,11 @@ var gameHandler = {
      * @returns {Object|null} reference of setTimeout function if matchHandler() is set to run, null otherwise
      */
     flipHandler: function(card) {
-        gameHandler.currentGame.freezeFlips(true);
-        gameHandler.currentGame.flipCard(card);
-        var flippedCards = gameHandler.currentGame.getFlippedCards();
+        this.currentGame.freezeFlips(true);
+        this.currentGame.flipCard(card);
+        var flippedCards = this.currentGame.getFlippedCards();
         if (flippedCards.length < 2) {
-            return gameHandler.currentGame.freezeFlips(false);
+            return this.currentGame.freezeFlips(false);
         }
         return setTimeout(function(){gameHandler.matchHandler(flippedCards);}, 500);
     },
@@ -545,26 +621,23 @@ var gameHandler = {
         for (var i = 0; i < flippedCards.length; i++) {
             flippedCardData.push(cardData.getCardDataFromCard(flippedCards[i], 'front'));
         }
-        this.currentGame.currentMatchAttempts++;
-        this.statistics.matchAttempts++;
-        if (!gameHandler.checkMatchConditionsMet(flippedCardData)) {
-            gameHandler.currentGame.unflipCards(flippedCards);
-            this.display_stats();
-            return gameHandler.currentGame.freezeFlips(false);
+        if (!this.checkMatchConditionsMet(flippedCardData)) {
+            this.currentGame.unflipCards(flippedCards);
+            this.applyNoMatchConsequences(flippedCardData);
+            return this.currentGame.freezeFlips(false);
         }
-        this.statistics.matchSuccesses++;
-        gameHandler.applyMatchConsequences(flippedCardData);
-        if (gameHandler.checkFailureConditions()) {
+        this.applyMatchConsequences(flippedCardData);
+        if (this.checkFailureConditions()) {
             setTimeout(function(){gameHandler.gameLost();},2000);
-            return gameHandler.currentGame.freezeFlips(true);
+            return this.currentGame.freezeFlips(true);
         }
-        gameHandler.currentGame.clearCards(flippedCards);
-        if (gameHandler.checkWinConditions()) {
+        this.currentGame.clearCards(flippedCards);
+        if (this.checkWinConditions()) {
             setTimeout(function(){gameHandler.gameWon();},2000);
-            return gameHandler.currentGame.freezeFlips(true);
+            return this.currentGame.freezeFlips(true);
         }
-        this.display_stats();
-        return gameHandler.currentGame.freezeFlips(false);
+        this.displayAllStats();
+        return this.currentGame.freezeFlips(false);
     },
 
     /**
@@ -581,7 +654,7 @@ var gameHandler = {
      */
     gameLost: function() {
         $('main').addClass('lose');
-        gameHandler.statistics.addGameCompletion('loss');
+        this.statistics.addGameCompletion('loss');
         return null;
     },
 
@@ -590,7 +663,7 @@ var gameHandler = {
     * @returns {boolean} true if all conditions are met, false otherwise
     */
     checkWinConditions: function() {
-        if (gameHandler.currentGame.currentMatches != gameHandler.currentGame.totalMatches()) {
+        if (this.currentGame.currentMatches != this.currentGame.totalMatches()) {
             return false;
         }
         return true;
@@ -603,7 +676,7 @@ var gameHandler = {
      */
     gameWon: function() {
         $('main').addClass('win');
-        gameHandler.statistics.addGameCompletion('win');
+        this.statistics.addGameCompletion('win');
         return null;
     },
 
@@ -611,40 +684,18 @@ var gameHandler = {
      *
      * @param {Array} statTypes
      */
-    display_stats: function(statTypes){
+    displayAllStats: function(statTypes){
         //  Insert Total Games into html
         this.statistics.updateStatDisplay('games');
         //  Insert Total Matches into html
         this.statistics.updateStatDisplay('matches');
         //  Insert Current Matches into html
-        var currentMatchAccuracy = (100 * this.currentGame.currentMatchAccuracy()).toFixed(2) + ' %';
-        var currentMatches = $('.current-matches .value');
-        currentMatches.html('');
-        currentMatches.append(
-            $('<table>').append(
-                $('<tr>').append(
-                    $('<th>',{text: 'Attempted : '}),
-                    $('<th>',{text: this.currentGame.currentMatchAttempts})
-                ),
-                $('<tr>').append(
-                    $('<td>',{text: 'Completed : '}),
-                    $('<td>',{text: this.currentGame.currentMatches})
-                ),
-                $('<tr>').append(
-                    $('<td>',{text: 'Failed : '}),
-                    $('<td>',{text: this.currentGame.currentMatchFailures()})
-                ),
-                $('<tr>').append(
-                    $('<th>',{text: 'Match Accuracy : '}),
-                    $('<th>',{text: currentMatchAccuracy})
-                )
-            )
-        );
+        this.currentGame.updateStatDisplay();
     },
-    //  Close display_stats method
+    //  Close displayAllStats method
 
     reset_game: function(){
-        gameHandler.currentGame.freezeFlips(true);
+        this.currentGame.freezeFlips(true);
         var main = $('main');
         if (!(main.hasClass('win')) && !(main.hasClass('lose'))) {
             this.statistics.addGameCompletion('reset');
@@ -654,8 +705,8 @@ var gameHandler = {
         this.currentGame.currentMatchAttempts = 0;
         this.currentGame.currentMatches = 0;
         $('.card').removeClass('cleared').removeClass('flipped').removeClass('breakable');
-        this.display_stats();
-        gameHandler.currentGame.freezeFlips(false);
+        this.displayAllStats();
+        this.currentGame.freezeFlips(false);
     }
 
 };
@@ -671,7 +722,7 @@ var gameHandler = {
 //  Begin Document Ready Section
 
 $(document).ready(function(){
-    gameHandler.display_stats();
+    gameHandler.displayAllStats();
     $('.card,.card img').attr({'draggable': 'false'});
 
     $('#game-area').on('mouseenter','.card:not(.breakable):not(.cleared) .back',function(){
