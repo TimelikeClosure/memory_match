@@ -207,7 +207,177 @@ var gameHandler = {
                 return 0;
             }
             return this.currentMatches / this.currentMatchAttempts;
+        },
+
+        /**
+         * Checks if the given index is a legal board index
+         * @param {number} index
+         * @returns {boolean} true if index is a valid card index, false otherwise
+         */
+        checkValidIndex: function(index) {
+            var rows = this.rows;
+            var columns = this.columns;
+            return (index >= 0 && index < rows * columns);
+        },
+
+        /**
+         * Checks if the given position is a legal board position
+         * @param {Array} position
+         * @returns {boolean} true if position is legal, false otherwise
+         */
+        checkValidPosition: function(position) {
+            var rows = this.rows;
+            var columns = this.columns;
+            if (position[0] >= 0 && position[0] < columns && position[1] >=0 && position[1] < rows) {
+                return true;
+            }
+            return false;
+        },
+
+
+        /**
+         * Returns the column and row for a card index
+         * @param {number} index
+         * @returns {null|Array} array of zero-based column and row positions
+         */
+        getPositionFromIndex: function(index) {
+            var rows = this.rows;
+            var columns = this.columns;
+            if (!this.checkValidIndex(index)) {
+                return null;
+            }
+            var position = [];
+            position.push(index % columns);
+            position.push((index - (index % columns))/columns);
+            return position;
+        },
+
+        /**
+         * Returns the index of the given position. If the position is invalid, returns null.
+         * @param {Array} position
+         * @returns {number|null} index number if position is valid, null otherwise
+         */
+        getIndexFromPosition: function(position) {
+            var columns = this.columns;
+            if (this.checkValidPosition(position)) {
+                return position[0] + columns * position[1];
+            }
+            return null;
+        },
+
+        /**
+         * Returns jQuery card selector. If the index is invalid, returns null.
+         * @param {number} index
+         * @returns {Object|null} card selector object if index is valid, null otherwise
+         */
+        getCardFromIndex: function(index) {
+            if(!this.checkValidIndex(index)) {
+                return null;
+            }
+            return $('.card:nth-of-type('+(index+1)+')');
+        },
+
+
+        /**
+         * Returns the set of all positions adjacent to the given position, which are on the game board
+         * @param {Array} position
+         * @returns {Array} array of positions
+         */
+        getValidNeighbors: function(position) {
+            var neighbors = [];
+            neighbors.push([position[0], position[1] - 1]);
+            neighbors.push([position[0] + 1, position[1]]);
+            neighbors.push([position[0], position[1] + 1]);
+            neighbors.push([position[0] - 1, position[1]]);
+            for (var i = neighbors.length-1; i>=0; i--) {
+                if (!this.checkValidPosition(neighbors[i])) {
+                    neighbors.splice(i,1);
+                }
+            }
+            return neighbors;
+        },
+
+        /**
+         * If the given card is breakable, returns true, otherwise false.
+         * @param {Object} card
+         * @returns {boolean} True if card is breakable, false otherwise.
+         */
+        checkBreakable: function(card) {
+            var position = this.getPositionFromIndex(card.index());
+            if (position[1] == 0) {
+                return true;
+            }
+            var neighbors = this.getValidNeighbors(position);
+            for (var i=0; i<neighbors.length; i++) {
+                var neighborCard = this.getCardFromIndex(this.getIndexFromPosition(neighbors[i]));
+                if (neighborCard.hasClass('cleared')){
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        /**
+         * If the given card back is transparent, returns true, otherwise false.
+         * @param {Object} cardBack
+         * @returns {boolean} true if cardBack is transparent, false otherwise
+         */
+        checkCardBackInvisible: function(cardBack) {
+            return (cardBack.css('opacity') == 0);
+        },
+
+        /**
+         * Sets the game area to stop or start allowing card flips
+         * @param condition
+         * @returns {null}
+         */
+        freezeFlips: function(condition) {
+            if (condition) {
+                $('#game-area').addClass('freeze-flips');
+            } else {
+                $('#game-area').removeClass('freeze-flips');
+            }
+            return null;
+        },
+
+        /**
+         * Returns the set of all non-cleared face up cards
+         * @returns {Object|jQuery|HTMLElement}
+         */
+        getFlippedCards: function() {
+            return $('.flipped:not(.cleared)');
+        },
+
+        /**
+         * Flips the given card face up.
+         * @param card
+         * @returns {null}
+         */
+        flipCard: function(card) {
+            card.addClass('flipped');
+            return null;
+        },
+
+        /**
+         * Flips the given set of cards face down.
+         * @param flippedCards
+         * @returns {null}
+         */
+        unflipCards: function(flippedCards) {
+            flippedCards.removeClass('flipped');
+            return null;
+        },
+
+        /**
+         * Clears the given set of cards.
+         * @param flippedCards
+         * @returns {null}
+         */
+        clearCards: function(flippedCards) {
+            flippedCards.addClass('cleared');
+            return null;
         }
+
     },
     statistics: {
         matchAttempts: 0,
@@ -232,174 +402,89 @@ var gameHandler = {
                 return 0;
             }
             return this.gamesWon / this.gamesPlayed();
-        }
-    },
+        },
 
-    /**
-     * Checks if the given index is a legal board index
-     * @param {number} index
-     * @returns {boolean} true if index is a valid card index, false otherwise
-     */
-    checkValidIndex: function(index) {
-        var rows = gameHandler.currentGame.rows;
-        var columns = gameHandler.currentGame.columns;
-        return (index >= 0 && index < rows * columns);
-    },
-
-    /**
-     * Checks if the given position is a legal board position
-     * @param {Array} position
-     * @returns {boolean} true if position is legal, false otherwise
-     */
-    checkValidPosition: function(position) {
-        var rows = gameHandler.currentGame.rows;
-        var columns = gameHandler.currentGame.columns;
-        if (position[0] >= 0 && position[0] < columns && position[1] >=0 && position[1] < rows) {
-            return true;
-        }
-        return false;
-    },
-
-    /**
-     * Returns the column and row for a card index
-     * @param {number} index
-     * @returns {null|Array} array of zero-based column and row positions
-     */
-     getPositionFromIndex: function(index) {
-        var rows = gameHandler.currentGame.rows;
-        var columns = gameHandler.currentGame.columns;
-        if (!gameHandler.checkValidIndex(index)) {
-            return null;
-        }
-        var position = [];
-        position.push(index % columns);
-        position.push((index - (index % columns))/columns);
-        return position;
-    },
-
-    /**
-     * Returns the index of the given position. If the position is invalid, returns null.
-     * @param {Array} position
-     * @returns {number|null} index number if position is valid, null otherwise
-     */
-     getIndexFromPosition: function(position) {
-        var columns = gameHandler.currentGame.columns;
-        if (gameHandler.checkValidPosition(position)) {
-            return position[0] + columns * position[1];
-        }
-        return null;
-    },
-
-    /**
-     * Returns jQuery card selector. If the index is invalid, returns null.
-     * @param {number} index
-     * @returns {Object|null} card selector object if index is valid, null otherwise
-     */
-     getCardFromIndex: function(index) {
-        if(!gameHandler.checkValidIndex(index)) {
-            return null;
-        }
-        return $('.card:nth-of-type('+(index+1)+')');
-    },
-
-    /**
-     * Returns the set of all positions adjacent to the given position, which are on the game board
-     * @param {Array} position
-     * @returns {Array} array of positions
-     */
-     getValidNeighbors: function(position) {
-        var neighbors = [];
-        neighbors.push([position[0], position[1] - 1]);
-        neighbors.push([position[0] + 1, position[1]]);
-        neighbors.push([position[0], position[1] + 1]);
-        neighbors.push([position[0] - 1, position[1]]);
-        for (var i = neighbors.length-1; i>=0; i--) {
-            if (!gameHandler.checkValidPosition(neighbors[i])) {
-                neighbors.splice(i,1);
+        /**
+         * Adds statistics for game completion
+         * @param {string} outcome
+         * @returns {null}
+         */
+        addGameCompletion: function(outcome) {
+            switch (outcome) {
+                case 'win':
+                    this.gamesWon++;
+                    break;
+                case 'loss':
+                    this.gamesLost++;
+                    break;
+                case 'reset':
+                    this.gamesReset++;
+                    break;
             }
-        }
-        return neighbors;
-    },
+            return this.updateStatDisplay('games');
+        },
 
-    /**
-     * If the given card is breakable, returns true, otherwise false.
-     * @param {Object} card
-     * @returns {boolean} True if card is breakable, false otherwise.
-     */
-     checkBreakable: function(card) {
-        var position = gameHandler.getPositionFromIndex(card.index());
-        if (position[1] == 0) {
-            return true;
-        }
-        var neighbors = gameHandler.getValidNeighbors(position);
-        for (var i=0; i<neighbors.length; i++) {
-            var neighborCard = gameHandler.getCardFromIndex(gameHandler.getIndexFromPosition(neighbors[i]));
-            if (neighborCard.hasClass('cleared')){
-                return true;
+        /**
+         * Updates statistics panel with the given statistics type.
+         * @param {string} statType
+         * @returns {null}
+         */
+        updateStatDisplay: function(statType){
+            if (statType == 'games') {  //  Insert Total Games into html
+                var winPercentage = (100 * this.gamesWinRatio()).toFixed(2) + ' %';
+                var gamesPlayed = $('.total-games .value');
+                gamesPlayed.html('');
+                gamesPlayed.append(
+                    $('<table>').append(
+                        $('<tr>').append(
+                            $('<th>',{text: 'Played : '}),
+                            $('<th>',{text: this.gamesPlayed()})
+                        ),
+                        $('<tr>').append(
+                            $('<td>',{text: 'Won : '}),
+                            $('<td>',{text: this.gamesWon})
+                        ),
+                        $('<tr>').append(
+                            $('<td>',{text: 'Lost : '}),
+                            $('<td>',{text: this.gamesLost})
+                        ),
+                        $('<tr>').append(
+                            $('<td>',{text: 'Abandoned : '}),
+                            $('<td>',{text: this.gamesReset})
+                        ),
+                        $('<tr>').append(
+                            $('<th>',{text: 'Win Rate : '}),
+                            $('<th>',{text: winPercentage})
+                        )
+                    )
+                );
+            } else if (statType == 'matches') {  //  Insert Total Matches into html
+                var totalMatchAccuracy = (100 * this.matchAccuracy()).toFixed(2) + ' %';
+                var totalMatches = $('.total-matches .value');
+                totalMatches.html('');
+                totalMatches.append(
+                    $('<table>').append(
+                        $('<tr>').append(
+                            $('<th>',{text: 'Attempted : '}),
+                            $('<th>',{text: this.matchAttempts})
+                        ),
+                        $('<tr>').append(
+                            $('<td>',{text: 'Completed : '}),
+                            $('<td>',{text: this.matchSuccesses})
+                        ),
+                        $('<tr>').append(
+                            $('<td>',{text: 'Failed : '}),
+                            $('<td>',{text: this.matchFailures()})
+                        ),
+                        $('<tr>').append(
+                            $('<th>',{text: 'Match Accuracy : '}),
+                            $('<th>',{text: totalMatchAccuracy})
+                        )
+                    )
+                );
             }
+            return null;  //  Returns null
         }
-        return false;
-    },
-
-    /**
-     * If the given card back is transparent, returns true, otherwise false.
-     * @param {Object} cardBack
-     * @returns {boolean} true if cardBack is transparent, false otherwise
-     */
-     checkCardBackInvisible: function(cardBack) {
-        return (cardBack.css('opacity') == 0);
-    },
-
-    /**
-     * Sets the game area to stop or start allowing card flips
-     * @param condition
-     * @returns {null}
-     */
-     freezeFlips: function(condition) {
-        if (condition) {
-            $('#game-area').addClass('freeze-flips');
-        } else {
-            $('#game-area').removeClass('freeze-flips');
-        }
-        return null;
-    },
-
-    /**
-     * Returns the set of all non-cleared face up cards
-     * @returns {Object|jQuery|HTMLElement}
-     */
-     getFlippedCards: function() {
-        return $('.flipped:not(.cleared)');
-    },
-
-    /**
-     * Flips the given card face up.
-     * @param card
-     * @returns {null}
-     */
-     flipCard: function(card) {
-        card.addClass('flipped');
-        return null;
-    },
-
-    /**
-     * Flips the given set of cards face down.
-     * @param flippedCards
-     * @returns {null}
-     */
-     unflipCards: function(flippedCards) {
-        flippedCards.removeClass('flipped');
-        return null;
-    },
-
-    /**
-     * Clears the given set of cards.
-     * @param flippedCards
-     * @returns {null}
-     */
-     clearCards: function(flippedCards) {
-        flippedCards.addClass('cleared');
-        return null;
     },
 
     /**
@@ -437,16 +522,16 @@ var gameHandler = {
      * Runs card flipping procedure. New cards cannot be flipped by user while running. Starts matching procedure after
      * delay if at least two cards are flipped, otherwise returns flipping control to the user and returns null.
      * @param {Object} card
-     * @returns {Object|null} reference of setTimeout function if matchingRound() is set to run, null otherwise
+     * @returns {Object|null} reference of setTimeout function if matchHandler() is set to run, null otherwise
      */
-    flippingRound: function(card) {
-        gameHandler.freezeFlips(true);
-        gameHandler.flipCard(card);
-        var flippedCards = gameHandler.getFlippedCards();
+    flipHandler: function(card) {
+        gameHandler.currentGame.freezeFlips(true);
+        gameHandler.currentGame.flipCard(card);
+        var flippedCards = gameHandler.currentGame.getFlippedCards();
         if (flippedCards.length < 2) {
-            return gameHandler.freezeFlips(false);
+            return gameHandler.currentGame.freezeFlips(false);
         }
-        return setTimeout(function(){gameHandler.matchingRound(flippedCards);}, 500);
+        return setTimeout(function(){gameHandler.matchHandler(flippedCards);}, 500);
     },
 
     /**
@@ -455,7 +540,7 @@ var gameHandler = {
      * @param flippedCards
      * @returns {null}
      */
-    matchingRound: function (flippedCards) {
+    matchHandler: function (flippedCards) {
         var flippedCardData = [];
         for (var i = 0; i < flippedCards.length; i++) {
             flippedCardData.push(cardData.getCardDataFromCard(flippedCards[i], 'front'));
@@ -463,23 +548,23 @@ var gameHandler = {
         this.currentGame.currentMatchAttempts++;
         this.statistics.matchAttempts++;
         if (!gameHandler.checkMatchConditionsMet(flippedCardData)) {
-            gameHandler.unflipCards(flippedCards);
+            gameHandler.currentGame.unflipCards(flippedCards);
             this.display_stats();
-            return gameHandler.freezeFlips(false);
+            return gameHandler.currentGame.freezeFlips(false);
         }
         this.statistics.matchSuccesses++;
         gameHandler.applyMatchConsequences(flippedCardData);
         if (gameHandler.checkFailureConditions()) {
             setTimeout(function(){gameHandler.gameLost();},2000);
-            return gameHandler.freezeFlips(true);
+            return gameHandler.currentGame.freezeFlips(true);
         }
-        gameHandler.clearCards(flippedCards);
+        gameHandler.currentGame.clearCards(flippedCards);
         if (gameHandler.checkWinConditions()) {
             setTimeout(function(){gameHandler.gameWon();},2000);
-            return gameHandler.freezeFlips(true);
+            return gameHandler.currentGame.freezeFlips(true);
         }
         this.display_stats();
-        return gameHandler.freezeFlips(false);
+        return gameHandler.currentGame.freezeFlips(false);
     },
 
     /**
@@ -496,12 +581,9 @@ var gameHandler = {
      */
     gameLost: function() {
         $('main').addClass('lose');
-        gameHandler.statistics.gamesLost++;
-        gameHandler.display_stats();
-        $('.game-message').text('You Lose!');
+        gameHandler.statistics.addGameCompletion('loss');
         return null;
     },
-
 
     /**
     * Checks whether all conditions for game success have been satisfied.
@@ -521,70 +603,19 @@ var gameHandler = {
      */
     gameWon: function() {
         $('main').addClass('win');
-        gameHandler.statistics.gamesWon++;
-        gameHandler.display_stats();
-        $('.game-message').text('You Win!');
+        gameHandler.statistics.addGameCompletion('win');
         return null;
     },
 
     /**
-     * Display stats in stats section on page.
+     *
+     * @param {Array} statTypes
      */
-    display_stats: function(){
+    display_stats: function(statTypes){
         //  Insert Total Games into html
-        var winPercentage = (100 * this.statistics.gamesWinRatio()).toFixed(2) + ' %';
-        var gamesPlayed = $('.total-games .value');
-        gamesPlayed.html('');
-        gamesPlayed.append(
-            $('<table>').append(
-                $('<tr>').append(
-                    $('<th>',{text: 'Played : '}),
-                    $('<th>',{text: this.statistics.gamesPlayed()})
-                ),
-                $('<tr>').append(
-                    $('<td>',{text: 'Won : '}),
-                    $('<td>',{text: this.statistics.gamesWon})
-                ),
-                $('<tr>').append(
-                    $('<td>',{text: 'Lost : '}),
-                    $('<td>',{text: this.statistics.gamesLost})
-                ),
-                $('<tr>').append(
-                    $('<td>',{text: 'Abandoned : '}),
-                    $('<td>',{text: this.statistics.gamesReset})
-                ),
-                $('<tr>').append(
-                    $('<th>',{text: 'Win Rate : '}),
-                    $('<th>',{text: winPercentage})
-                )
-            )
-        );
-
+        this.statistics.updateStatDisplay('games');
         //  Insert Total Matches into html
-        var totalMatchAccuracy = (100 * this.statistics.matchAccuracy()).toFixed(2) + ' %';
-        var totalMatches = $('.total-matches .value');
-        totalMatches.html('');
-        totalMatches.append(
-            $('<table>').append(
-                $('<tr>').append(
-                    $('<th>',{text: 'Attempted : '}),
-                    $('<th>',{text: this.statistics.matchAttempts})
-                ),
-                $('<tr>').append(
-                    $('<td>',{text: 'Completed : '}),
-                    $('<td>',{text: this.statistics.matchSuccesses})
-                ),
-                $('<tr>').append(
-                    $('<td>',{text: 'Failed : '}),
-                    $('<td>',{text: this.statistics.matchFailures()})
-                ),
-                $('<tr>').append(
-                    $('<th>',{text: 'Match Accuracy : '}),
-                    $('<th>',{text: totalMatchAccuracy})
-                )
-            )
-        );
-
+        this.statistics.updateStatDisplay('matches');
         //  Insert Current Matches into html
         var currentMatchAccuracy = (100 * this.currentGame.currentMatchAccuracy()).toFixed(2) + ' %';
         var currentMatches = $('.current-matches .value');
@@ -613,10 +644,10 @@ var gameHandler = {
     //  Close display_stats method
 
     reset_game: function(){
-        gameHandler.freezeFlips(true);
+        gameHandler.currentGame.freezeFlips(true);
         var main = $('main');
         if (!(main.hasClass('win')) && !(main.hasClass('lose'))) {
-            this.statistics.gamesReset++;
+            this.statistics.addGameCompletion('reset');
         } else {
             main.removeClass('win').removeClass('lose');
         }
@@ -624,7 +655,7 @@ var gameHandler = {
         this.currentGame.currentMatches = 0;
         $('.card').removeClass('cleared').removeClass('flipped').removeClass('breakable');
         this.display_stats();
-        gameHandler.freezeFlips(false);
+        gameHandler.currentGame.freezeFlips(false);
     }
 
 };
@@ -644,7 +675,7 @@ $(document).ready(function(){
     $('.card,.card img').attr({'draggable': 'false'});
 
     $('#game-area').on('mouseenter','.card:not(.breakable):not(.cleared) .back',function(){
-        if (gameHandler.checkBreakable($(this).parent())) {
+        if (gameHandler.currentGame.checkBreakable($(this).parent())) {
             $(this).parent().addClass('breakable');
         }
     });
@@ -652,8 +683,8 @@ $(document).ready(function(){
         $(this).trigger('mouseenter');
     });
     $('#game-area').on('mouseup','.card.breakable:not(.cleared) .back',function(){
-        if(gameHandler.checkCardBackInvisible($(this))) {
-            gameHandler.flippingRound($(this).parent());
+        if(gameHandler.currentGame.checkCardBackInvisible($(this))) {
+            gameHandler.flipHandler($(this).parent());
         }
     });
     $('#game-area').on('mouseleave','.card.breakable:not(.cleared) .back',function(){
