@@ -1,7 +1,7 @@
 
 //  Begin Card Data List
 
-var card_data = {
+var cardData = {
     front: {
         armor_chain: {
             name: 'armor_chain',
@@ -155,6 +155,24 @@ var card_data = {
             alt: 'Diamond Ore Block',
             depth: 6
         }
+    },
+
+    /**
+     * Takes a $('.card') element and returns its card properties. Returns null if not found.
+     * @param {Object} card
+     * @param {string} face "front" or "back"
+     * @returns {Object|null} list of data properties for the given card's type, null if not found
+     */
+    getCardDataFromCard: function(card, face) {
+        var cardSrc = $(card).find('.'+face+'>img').attr('src');
+        for (var cardType in cardData[face]) {
+            if(cardData[face].hasOwnProperty(cardType)) {
+                if (cardSrc == cardData[face][cardType].src) {
+                    return cardData[face][cardType];
+                }
+            }
+        }
+        return null;
     }
 };
 
@@ -217,6 +235,203 @@ var gameHandler = {
         }
     },
 
+    /**
+     * Checks if the given index is a legal board index
+     * @param {number} index
+     * @returns {boolean} true if index is a valid card index, false otherwise
+     */
+    checkValidIndex: function(index) {
+        var rows = gameHandler.currentGame.rows;
+        var columns = gameHandler.currentGame.columns;
+        return (index >= 0 && index < rows * columns);
+    },
+
+    /**
+     * Checks if the given position is a legal board position
+     * @param {Array} position
+     * @returns {boolean} true if position is legal, false otherwise
+     */
+    checkValidPosition: function(position) {
+        var rows = gameHandler.currentGame.rows;
+        var columns = gameHandler.currentGame.columns;
+        if (position[0] >= 0 && position[0] < columns && position[1] >=0 && position[1] < rows) {
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Returns the column and row for a card index
+     * @param {number} index
+     * @returns {null|Array} array of zero-based column and row positions
+     */
+     getPositionFromIndex: function(index) {
+        var rows = gameHandler.currentGame.rows;
+        var columns = gameHandler.currentGame.columns;
+        if (!gameHandler.checkValidIndex(index)) {
+            return null;
+        }
+        var position = [];
+        position.push(index % columns);
+        position.push((index - (index % columns))/columns);
+        return position;
+    },
+
+    /**
+     * Returns the index of the given position. If the position is invalid, returns null.
+     * @param {Array} position
+     * @returns {number|null} index number if position is valid, null otherwise
+     */
+     getIndexFromPosition: function(position) {
+        var columns = gameHandler.currentGame.columns;
+        if (gameHandler.checkValidPosition(position)) {
+            return position[0] + columns * position[1];
+        }
+        return null;
+    },
+
+    /**
+     * Returns jQuery card selector. If the index is invalid, returns null.
+     * @param {number} index
+     * @returns {Object|null} card selector object if index is valid, null otherwise
+     */
+     getCardFromIndex: function(index) {
+        if(!gameHandler.checkValidIndex(index)) {
+            return null;
+        }
+        return $('.card:nth-of-type('+(index+1)+')');
+    },
+
+    /**
+     * Returns the set of all positions adjacent to the given position, which are on the game board
+     * @param {Array} position
+     * @returns {Array} array of positions
+     */
+     getValidNeighbors: function(position) {
+        var neighbors = [];
+        neighbors.push([position[0], position[1] - 1]);
+        neighbors.push([position[0] + 1, position[1]]);
+        neighbors.push([position[0], position[1] + 1]);
+        neighbors.push([position[0] - 1, position[1]]);
+        for (var i = neighbors.length-1; i>=0; i--) {
+            if (!gameHandler.checkValidPosition(neighbors[i])) {
+                neighbors.splice(i,1);
+            }
+        }
+        return neighbors;
+    },
+
+    /**
+     * If the given card is breakable, returns true, otherwise false.
+     * @param {Object} card
+     * @returns {boolean} True if card is breakable, false otherwise.
+     */
+     checkBreakable: function(card) {
+        var position = gameHandler.getPositionFromIndex(card.index());
+        if (position[1] == 0) {
+            return true;
+        }
+        var neighbors = gameHandler.getValidNeighbors(position);
+        for (var i=0; i<neighbors.length; i++) {
+            var neighborCard = gameHandler.getCardFromIndex(gameHandler.getIndexFromPosition(neighbors[i]));
+            if (neighborCard.hasClass('cleared')){
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * If the given card back is transparent, returns true, otherwise false.
+     * @param {Object} cardBack
+     * @returns {boolean} true if cardBack is transparent, false otherwise
+     */
+     checkCardBackInvisible: function(cardBack) {
+        return (cardBack.css('opacity') == 0);
+    },
+
+    /**
+     * Sets the game area to stop or start allowing card flips
+     * @param condition
+     * @returns {null}
+     */
+     freezeFlips: function(condition) {
+        if (condition) {
+            $('#game-area').addClass('freeze-flips');
+        } else {
+            $('#game-area').removeClass('freeze-flips');
+        }
+        return null;
+    },
+
+    /**
+     * Returns the set of all non-cleared face up cards
+     * @returns {Object|jQuery|HTMLElement}
+     */
+     getFlippedCards: function() {
+        return $('.flipped:not(.cleared)');
+    },
+
+    /**
+     * Flips the given card face up.
+     * @param card
+     * @returns {null}
+     */
+     flipCard: function(card) {
+        card.addClass('flipped');
+        return null;
+    },
+
+    /**
+     * Flips the given set of cards face down.
+     * @param flippedCards
+     * @returns {null}
+     */
+     unflipCards: function(flippedCards) {
+        flippedCards.removeClass('flipped');
+        return null;
+    },
+
+    /**
+     * Clears the given set of cards.
+     * @param flippedCards
+     * @returns {null}
+     */
+     clearCards: function(flippedCards) {
+        flippedCards.addClass('cleared');
+        return null;
+    },
+
+    /**
+     * Returns whether the given card data meets all the conditions to be matched.
+     * @param {Array} flippedCardData
+     * @returns {boolean} true if cards can be legally matched, false otherwise
+     */
+    checkMatchConditionsMet: function(flippedCardData) {
+        //  Checks whether cards are compatible for matching
+        if (flippedCardData[0].match == 'self' && flippedCardData[1].match == 'self') {
+            if (flippedCardData[0].name != flippedCardData[1].name) {
+                return false;
+            }
+        } else if (flippedCardData[0].match != flippedCardData[1].name || flippedCardData[1].match != flippedCardData[0].name) {
+            return false;
+        }
+        //  Checks whether cards can be matched based upon outside requirements, specific to card type
+        //  (to be added)
+
+        //  Returns true if all conditions are met
+        return true;
+    },
+
+    /**
+     * Applies the consequences of the currently matched cards
+     * @param flippedCardData
+     * @returns {null}
+     */
+    applyMatchConsequences: function(flippedCardData) {
+        gameHandler.currentGame.currentMatches++;
+        return null;
+    },
 
     /**
      * Runs card flipping procedure. New cards cannot be flipped by user while running. Starts matching procedure after
@@ -225,15 +440,14 @@ var gameHandler = {
      * @returns {Object|null} reference of setTimeout function if matchingRound() is set to run, null otherwise
      */
     flippingRound: function(card) {
-        freezeFlips(true);
-        flipCard(card);
-        var flippedCards = getFlippedCards();
+        gameHandler.freezeFlips(true);
+        gameHandler.flipCard(card);
+        var flippedCards = gameHandler.getFlippedCards();
         if (flippedCards.length < 2) {
-            return freezeFlips(false);
+            return gameHandler.freezeFlips(false);
         }
         return setTimeout(function(){gameHandler.matchingRound(flippedCards);}, 500);
     },
-
 
     /**
      * Runs card matching procedure.  Activates win or loss procedures if conditions are met, otherwise returns flipping
@@ -244,30 +458,37 @@ var gameHandler = {
     matchingRound: function (flippedCards) {
         var flippedCardData = [];
         for (var i = 0; i < flippedCards.length; i++) {
-            flippedCardData.push(getCardDataFromCard(flippedCards[i], 'front'));
+            flippedCardData.push(cardData.getCardDataFromCard(flippedCards[i], 'front'));
         }
         this.currentGame.currentMatchAttempts++;
         this.statistics.matchAttempts++;
-        if (!checkMatchConditionsMet(flippedCardData)) {
-            unflipCards(flippedCards);
+        if (!gameHandler.checkMatchConditionsMet(flippedCardData)) {
+            gameHandler.unflipCards(flippedCards);
             this.display_stats();
-            return freezeFlips(false);
+            return gameHandler.freezeFlips(false);
         }
         this.statistics.matchSuccesses++;
-        applyMatchConsequences(flippedCardData);
-        if (checkFailureConditions()) {
+        gameHandler.applyMatchConsequences(flippedCardData);
+        if (gameHandler.checkFailureConditions()) {
             setTimeout(function(){gameHandler.gameLost();},2000);
-            return freezeFlips(true);
+            return gameHandler.freezeFlips(true);
         }
-        clearCards(flippedCards);
-        if (checkWinConditions()) {
+        gameHandler.clearCards(flippedCards);
+        if (gameHandler.checkWinConditions()) {
             setTimeout(function(){gameHandler.gameWon();},2000);
-            return freezeFlips(true);
+            return gameHandler.freezeFlips(true);
         }
         this.display_stats();
-        return freezeFlips(false);
+        return gameHandler.freezeFlips(false);
     },
 
+    /**
+     * Checks whether any conditions for game failure have been satisfied.
+     * @returns {boolean} true if conditions for game failure satisfied, false otherwise
+     */
+    checkFailureConditions: function() {
+        return false;
+    },
 
     /**
      * Runs game loss procedures.
@@ -280,6 +501,19 @@ var gameHandler = {
         $('.game-message').text('You Lose!');
         return null;
     },
+
+
+    /**
+    * Checks whether all conditions for game success have been satisfied.
+    * @returns {boolean} true if all conditions are met, false otherwise
+    */
+    checkWinConditions: function() {
+        if (gameHandler.currentGame.currentMatches != gameHandler.currentGame.totalMatches()) {
+            return false;
+        }
+        return true;
+    },
+
 
     /**
      * Runs game win procedures.
@@ -379,7 +613,7 @@ var gameHandler = {
     //  Close display_stats method
 
     reset_game: function(){
-        freezeFlips(true);
+        gameHandler.freezeFlips(true);
         var main = $('main');
         if (!(main.hasClass('win')) && !(main.hasClass('lose'))) {
             this.statistics.gamesReset++;
@@ -390,7 +624,7 @@ var gameHandler = {
         this.currentGame.currentMatches = 0;
         $('.card').removeClass('cleared').removeClass('flipped').removeClass('breakable');
         this.display_stats();
-        freezeFlips(false);
+        gameHandler.freezeFlips(false);
     }
 
 };
@@ -399,236 +633,7 @@ var gameHandler = {
 
 //  Begin Function Definitions
 
-/**
- * Checks if the given index is a legal board index
- * @param {number} index
- * @returns {boolean} true if index is a valid card index, false otherwise
- */
-function checkValidIndex(index) {
-    var rows = gameHandler.currentGame.rows;
-    var columns = gameHandler.currentGame.columns;
-    return (index >= 0 && index < rows * columns);
-}
 
-/**
- * Checks if the given position is a legal board position
- * @param {Array} position
- * @returns {boolean} true if position is legal, false otherwise
- */
-function checkValidPosition(position) {
-    var rows = gameHandler.currentGame.rows;
-    var columns = gameHandler.currentGame.columns;
-    if (position[0] >= 0 && position[0] < columns && position[1] >=0 && position[1] < rows) {
-        return true;
-    }
-    return false;
-}
-
-/**
- * Returns the column and row for a card index
- * @param {number} index
- * @returns {null|Array} array of zero-based column and row positions
- */
-function getPositionFromIndex(index) {
-    var rows = gameHandler.currentGame.rows;
-    var columns = gameHandler.currentGame.columns;
-    if (!checkValidIndex(index)) {
-        return null;
-    }
-    var position = [];
-    position.push(index % columns);
-    position.push((index - (index % columns))/columns);
-    return position;
-}
-
-/**
- * Returns the index of the given position. If the position is invalid, returns null.
- * @param {Array} position
- * @returns {number|null} index number if position is valid, null otherwise
- */
-function getIndexFromPosition(position) {
-    var columns = gameHandler.currentGame.columns;
-    if (checkValidPosition(position)) {
-        return position[0] + columns * position[1];
-    }
-    return null;
-}
-
-/**
- * Returns jQuery card selector. If the index is invalid, returns null.
- * @param {number} index
- * @returns {Object|null} card selector object if index is valid, null otherwise
- */
-function getCardFromIndex(index) {
-    if(!checkValidIndex(index)) {
-        return null;
-    }
-    return $('.card:nth-of-type('+(index+1)+')');
-}
-
-/**
- * Returns the set of all positions adjacent to the given position, which are on the game board
- * @param {Array} position
- * @returns {Array} array of positions
- */
-function getValidNeighbors(position) {
-    var neighbors = [];
-    neighbors.push([position[0], position[1] - 1]);
-    neighbors.push([position[0] + 1, position[1]]);
-    neighbors.push([position[0], position[1] + 1]);
-    neighbors.push([position[0] - 1, position[1]]);
-    for (var i = neighbors.length-1; i>=0; i--) {
-        if (!checkValidPosition(neighbors[i])) {
-            neighbors.splice(i,1);
-        }
-    }
-    return neighbors;
-}
-
-/**
- * If the given card is breakable, returns true, otherwise false.
- * @param {Object} card
- * @returns {boolean} True if card is breakable, false otherwise.
- */
-function checkBreakable(card) {
-    var position = getPositionFromIndex(card.index());
-    if (position[1] == 0) {
-        return true;
-    }
-    var neighbors = getValidNeighbors(position);
-    for (var i=0; i<neighbors.length; i++) {
-        var neighborCard = getCardFromIndex(getIndexFromPosition(neighbors[i]));
-        if (neighborCard.hasClass('cleared')){
-            return true;
-        }
-    }
-    return false;
-}
-
-/**
- * If the given card back is transparent, returns true, otherwise false.
- * @param {Object} cardBack
- * @returns {boolean} true if cardBack is transparent, false otherwise
- */
-function checkCardBackInvisible(cardBack) {
-    return (cardBack.css('opacity') == 0);
-}
-
-/**
- * Sets the game area to stop or start allowing card flips
- * @param condition
- * @returns {null}
- */
-function freezeFlips(condition) {
-    if (condition) {
-        $('#game-area').addClass('freeze-flips');
-    } else {
-        $('#game-area').removeClass('freeze-flips');
-    }
-    return null;
-}
-
-/**
- * Returns the set of all non-cleared face up cards
- * @returns {Object|jQuery|HTMLElement}
- */
-function getFlippedCards() {
-    return $('.flipped:not(.cleared)');
-}
-
-/**
- * Flips the given card face up.
- * @param card
- * @returns {null}
- */
-function flipCard(card) {
-    card.addClass('flipped');
-    return null;
-}
-
-/**
- * Flips the given set of cards face down.
- * @param flippedCards
- * @returns {null}
- */
-function unflipCards(flippedCards) {
-    flippedCards.removeClass('flipped');
-    return null;
-}
-
-/**
- * Clears the given set of cards.
- * @param flippedCards
- * @returns {null}
- */
-function clearCards(flippedCards) {
-    flippedCards.addClass('cleared');
-    return null;
-}
-
-/**
- * Takes a $('.card') element and returns its card properties. Returns null if not found.
- * @param {Object} card
- * @param {string} face "front" or "back"
- * @returns {Object|null} list of data properties for the given card's type, null if not found
- */
-function getCardDataFromCard (card, face) {
-
-    var cardSrc = $(card).find('.'+face+'>img').attr('src');
-    for (var cardType in card_data[face]) {
-        if(card_data[face].hasOwnProperty(cardType)) {
-            if (cardSrc == card_data[face][cardType].src) {
-                return card_data[face][cardType];
-            }
-        }
-    }
-    return null;
-}
-
-/**
- * Returns whether the given card data meets all the conditions to be matched.
- * @param {Array} flippedCardData
- * @returns {boolean} true if cards can be legally matched, false otherwise
- */
-function checkMatchConditionsMet(flippedCardData) {
-    //  Checks whether cards are compatible for matching
-    if (flippedCardData[0].match == 'self' && flippedCardData[1].match == 'self') {
-        if (flippedCardData[0].name != flippedCardData[1].name) {
-            return false;
-        }
-    } else if (flippedCardData[0].match != flippedCardData[1].name || flippedCardData[1].match != flippedCardData[0].name) {
-        return false;
-    }
-    //  Checks whether cards can be matched based upon outside requirements, specific to card type
-    //  (to be added)
-
-    //  Returns true if all conditions are met
-    return true;
-}
-
-function applyMatchConsequences (flippedCardData) {
-    gameHandler.currentGame.currentMatches++;
-    return null;
-}
-
-/**
- * Checks whether any conditions for game failure have been satisfied.
- * @returns {boolean} true if conditions for game failure satisfied, false otherwise
- */
-function checkFailureConditions () {
-    return false;
-}
-
-/**
- * Checks whether all conditions for game success have been satisfied.
- * @returns {boolean} true if all conditions are met, false otherwise
- */
-function checkWinConditions () {
-    if (gameHandler.currentGame.currentMatches != gameHandler.currentGame.totalMatches()) {
-        return false;
-    }
-    return true;
-}
 
 //  Close Function Definitions
 
@@ -639,7 +644,7 @@ $(document).ready(function(){
     $('.card,.card img').attr({'draggable': 'false'});
 
     $('#game-area').on('mouseenter','.card:not(.breakable):not(.cleared) .back',function(){
-        if (checkBreakable($(this).parent())) {
+        if (gameHandler.checkBreakable($(this).parent())) {
             $(this).parent().addClass('breakable');
         }
     });
@@ -647,7 +652,7 @@ $(document).ready(function(){
         $(this).trigger('mouseenter');
     });
     $('#game-area').on('mouseup','.card.breakable:not(.cleared) .back',function(){
-        if(checkCardBackInvisible($(this))) {
+        if(gameHandler.checkCardBackInvisible($(this))) {
             gameHandler.flippingRound($(this).parent());
         }
     });
