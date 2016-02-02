@@ -1,0 +1,103 @@
+This is a possible future restructuring of javascript code to encapsulate variables and functions in global objects.  Currently incomplete.
+
+/*
+
+
+/!**
+ * Constructs a Game() object which holds data for a single game.
+ * @param {number} boardColumns number of columns on game board
+ * @param {number} boardRows number of rows on game board
+ * @constructor
+ *!/
+function Game(boardColumns, boardRows) {
+    var columns = boardColumns;
+    var rows = boardRows;
+    this.getBoardDim = function(side){
+        if (side == 'columns') {
+            return columns;
+        } else if (side == 'rows') {
+            return rows;
+        } else if (side == 'both') {
+            return [columns, rows];
+        }
+        return null;
+    };
+    var totalMatches = columns * rows / 2;
+    var currentMatches = 0;
+    this.getMatchesByType = function(matchType) {
+        if (matchType == 'current') {
+            return currentMatches;
+        } else if (matchType == 'all') {
+            return totalMatches;
+        } else if (matchType == 'remaining') {
+            return totalMatches - currentMatches;
+        }
+        return null;
+    };
+    this.addMatch = function(){
+        currentMatches++;
+        return currentMatches == totalMatches;
+    };
+}
+
+//  Close Game Object Constructor
+
+function Statistics() {
+    var matchAttempts = 0;
+    var matchSuccesses = 0;
+    this.getMatchAttemptsByType = function(matchType) {
+        if (matchType == 'all') {
+            return matchAttempts;
+        } else if (matchType == 'successes') {
+            return matchSuccesses;
+        } else if (matchType == 'failures') {
+            return matchAttempts - matchSuccesses;
+        } else if (matchType == 'accuracy') {
+            if (matchAttempts == 0) {
+                return 0;
+            }
+            return matchSuccesses / matchAttempts;
+        }
+    };
+    this.addMatchAttempt = function(matchAttemptOutcome){
+        matchAttempts++;
+        if (matchAttemptOutcome) {
+            matchSuccesses++;
+        }
+        return null;
+    };
+    var gamesReset = 0;
+    var gamesWon = 0;
+    var gamesLost = 0;
+    this.getGamesByType = function(gameType) {
+        if (gameType == 'all') {
+            return gamesReset + gamesWon + gamesLost;
+        } else if (gameType == 'resets') {
+            return gamesReset;
+        } else if (gameType == 'wins') {
+            return gamesWon;
+        } else if (gameType == 'losses') {
+            return gamesLost;
+        }
+        return null;
+    };
+    this.addGameCompletion = function(gameOutcome){
+        if (gameOutcome == 'win') {
+            gamesWon++;
+        } else if (gameOutcome == 'loss') {
+            gamesLost++;
+        } else {
+            gamesReset++;
+        }
+        return null;
+    };
+}
+
+function GameHandler() {
+    var statistics = new Statistics();
+    var currentGame = new Game(6,4);
+}
+
+var gameHandler = new GameHandler();
+
+*/
