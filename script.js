@@ -1,13 +1,3 @@
-//  Begin Game Global Parameters
-
-var game_param = {
-    rows : 4,
-    columns: 6,
-    total_matches: 12,
-    current_matches: 0
-};
-
-//  Close Game Global Parameters
 
 //  Begin Card Data List
 
@@ -170,6 +160,204 @@ var card_data = {
 
 //  Close Card Data List
 
+/*
+
+
+/!**
+ * Constructs a Game() object which holds data for a single game.
+ * @param {number} boardColumns number of columns on game board
+ * @param {number} boardRows number of rows on game board
+ * @constructor
+ *!/
+function Game(boardColumns, boardRows) {
+    var columns = boardColumns;
+    var rows = boardRows;
+    this.getBoardDim = function(side){
+        if (side == 'columns') {
+            return columns;
+        } else if (side == 'rows') {
+            return rows;
+        } else if (side == 'both') {
+            return [columns, rows];
+        }
+        return null;
+    };
+    var totalMatches = columns * rows / 2;
+    var currentMatches = 0;
+    this.getMatchesByType = function(matchType) {
+        if (matchType == 'current') {
+            return currentMatches;
+        } else if (matchType == 'all') {
+            return totalMatches;
+        } else if (matchType == 'remaining') {
+            return totalMatches - currentMatches;
+        }
+        return null;
+    };
+    this.addMatch = function(){
+        currentMatches++;
+        return currentMatches == totalMatches;
+    };
+}
+
+//  Close Game Object Constructor
+
+function Statistics() {
+    var matchAttempts = 0;
+    var matchSuccesses = 0;
+    this.getMatchAttemptsByType = function(matchType) {
+        if (matchType == 'all') {
+            return matchAttempts;
+        } else if (matchType == 'successes') {
+            return matchSuccesses;
+        } else if (matchType == 'failures') {
+            return matchAttempts - matchSuccesses;
+        } else if (matchType == 'accuracy') {
+            if (matchAttempts == 0) {
+                return 0;
+            }
+            return matchSuccesses / matchAttempts;
+        }
+    };
+    this.addMatchAttempt = function(matchAttemptOutcome){
+        matchAttempts++;
+        if (matchAttemptOutcome) {
+            matchSuccesses++;
+        }
+        return null;
+    };
+    var gamesReset = 0;
+    var gamesWon = 0;
+    var gamesLost = 0;
+    this.getGamesByType = function(gameType) {
+        if (gameType == 'all') {
+            return gamesReset + gamesWon + gamesLost;
+        } else if (gameType == 'resets') {
+            return gamesReset;
+        } else if (gameType == 'wins') {
+            return gamesWon;
+        } else if (gameType == 'losses') {
+            return gamesLost;
+        }
+        return null;
+    };
+    this.addGameCompletion = function(gameOutcome){
+        if (gameOutcome == 'win') {
+            gamesWon++;
+        } else if (gameOutcome == 'loss') {
+            gamesLost++;
+        } else {
+            gamesReset++;
+        }
+        return null;
+    };
+}
+
+function GameHandler() {
+    var statistics = new Statistics();
+    var currentGame = new Game(6,4);
+}
+
+var gameHandler = new GameHandler();
+
+*/
+
+//  Begin Game Global Parameters
+
+var game_param = {
+    current_game: {
+        rows: 4,
+        columns: 6,
+        total_matches: 12,
+        current_matches: 0
+    },
+    statistics: {
+        match_attempts: 0,
+        match_successes: 0,
+        match_failures: function(){
+            return this.match_attempts - this.match_successes;
+        },
+        match_accuracy: function(){
+            if(this.match_attempts == 0) {
+                return 0;
+            }
+            return this.match_successes / this.match_attempts;
+        },
+        games_reset: 0,
+        games_won: 0,
+        games_lost: 0,
+        games_played: function(){
+            return this.games_reset + this.games_won + this.games_lost;
+        },
+        games_win_ratio: function(){
+            if (this.games_played() == 0){
+                return 0;
+            }
+            return this.games_won / this.games_played();
+        },
+        display_stats: function(){
+            //  Insert Game Totals into html
+            var winPercentage = (100 * this.games_win_ratio()).toFixed(2) + ' %';
+            var gamesPlayed = $('.games-played .value');
+            gamesPlayed.html('');
+            gamesPlayed.append(
+                $('<table>').append(
+                    $('<tr>').append(
+                        $('<th>',{text: 'Played : '}),
+                        $('<th>',{text: this.games_played()})
+                    ),
+                    $('<tr>').append(
+                        $('<td>',{text: 'Won : '}),
+                        $('<td>',{text: this.games_won})
+                    ),
+                    $('<tr>').append(
+                        $('<td>',{text: 'Lost : '}),
+                        $('<td>',{text: this.games_lost})
+                    ),
+                    $('<tr>').append(
+                        $('<td>',{text: 'Abandoned : '}),
+                        $('<td>',{text: this.games_reset})
+                    ),
+                    $('<tr>').append(
+                        $('<th>',{text: 'Win Rate : '}),
+                        $('<th>',{text: winPercentage})
+                    )
+                )
+            );
+
+            //  Insert Match Totals into html
+            var matchAccuracy = (100 * this.match_accuracy()).toFixed(2) + ' %';
+            var matches = $('.matches .value');
+            matches.html('');
+            matches.append(
+                $('<table>').append(
+                    $('<tr>').append(
+                        $('<th>',{text: 'Attempted : '}),
+                        $('<th>',{text: this.match_attempts})
+                    ),
+                    $('<tr>').append(
+                        $('<td>',{text: 'Completed : '}),
+                        $('<td>',{text: this.match_successes})
+                    ),
+                    $('<tr>').append(
+                        $('<td>',{text: 'Failed : '}),
+                        $('<td>',{text: this.match_failures()})
+                    ),
+                    $('<tr>').append(
+                        $('<th>',{text: 'Match Accuracy : '}),
+                        $('<th>',{text: matchAccuracy})
+                    )
+                )
+            );
+
+            //  Insert Accuracy Ratios into html
+
+        }
+    }
+};
+
+//  Close Game Global Parameters
+
 //  Begin Function Definitions
 
 /**
@@ -178,8 +366,8 @@ var card_data = {
  * @returns {boolean} true if index is a valid card index, false otherwise
  */
 function checkValidIndex(index) {
-    var rows = game_param.rows;
-    var columns = game_param.columns;
+    var rows = game_param.current_game.rows;
+    var columns = game_param.current_game.columns;
     return (index >= 0 && index < rows * columns);
 }
 
@@ -189,8 +377,8 @@ function checkValidIndex(index) {
  * @returns {boolean} true if position is legal, false otherwise
  */
 function checkValidPosition(position) {
-    var rows = game_param.rows;
-    var columns = game_param.columns;
+    var rows = game_param.current_game.rows;
+    var columns = game_param.current_game.columns;
     if (position[0] >= 0 && position[0] < columns && position[1] >=0 && position[1] < rows) {
         return true;
     }
@@ -203,8 +391,8 @@ function checkValidPosition(position) {
  * @returns {null|Array} array of zero-based column and row positions
  */
 function getPositionFromIndex(index) {
-    var rows = game_param.rows;
-    var columns = game_param.columns;
+    var rows = game_param.current_game.rows;
+    var columns = game_param.current_game.columns;
     if (!checkValidIndex(index)) {
         return null;
     }
@@ -220,7 +408,7 @@ function getPositionFromIndex(index) {
  * @returns {number|null} index number if position is valid, null otherwise
  */
 function getIndexFromPosition(position) {
-    var columns = game_param.columns;
+    var columns = game_param.current_game.columns;
     if (checkValidPosition(position)) {
         return position[0] + columns * position[1];
     }
@@ -380,7 +568,7 @@ function checkMatchConditionsMet(flippedCardData) {
 }
 
 function applyMatchConsequences (flippedCardData) {
-    game_param.current_matches++;
+    game_param.current_game.current_matches++;
     return null;
 }
 
@@ -397,7 +585,7 @@ function checkFailureConditions () {
  * @returns {boolean} true if all conditions are met, false otherwise
  */
 function checkWinConditions () {
-    if (game_param.current_matches != game_param.total_matches) {
+    if (game_param.current_game.current_matches != game_param.current_game.total_matches) {
         return false;
     }
     return true;
@@ -409,6 +597,8 @@ function checkWinConditions () {
  */
 function gameLost() {
     $('main').addClass('lose');
+    game_param.statistics.games_lost++;
+    game_param.statistics.display_stats();
     $('.game-message').text('You Lose!');
     return null;
 }
@@ -419,6 +609,8 @@ function gameLost() {
  */
 function gameWon() {
     $('main').addClass('win');
+    game_param.statistics.games_won++;
+    game_param.statistics.display_stats();
     $('.game-message').text('You Win!');
     return null;
 }
@@ -450,10 +642,13 @@ function matchingRound (flippedCards) {
     for (var i = 0; i < flippedCards.length; i++) {
         flippedCardData.push(getCardDataFromCard(flippedCards[i], 'front'));
     }
+    game_param.statistics.match_attempts++;
     if (!checkMatchConditionsMet(flippedCardData)) {
         unflipCards(flippedCards);
+        game_param.statistics.display_stats();
         return freezeFlips(false);
     }
+    game_param.statistics.match_successes++;
     applyMatchConsequences(flippedCardData);
     if (checkFailureConditions()) {
         setTimeout(function(){gameLost();},2000);
@@ -464,6 +659,7 @@ function matchingRound (flippedCards) {
         setTimeout(function(){gameWon();},2000);
         return freezeFlips(true);
     }
+    game_param.statistics.display_stats();
     return freezeFlips(false);
 }
 
@@ -472,6 +668,7 @@ function matchingRound (flippedCards) {
 //  Begin Document Ready Section
 
 $(document).ready(function(){
+    game_param.statistics.display_stats();
     $('.card,.card img').attr({'draggable': 'false'});
 
     $('#game-area').on('mouseenter','.card:not(.breakable):not(.cleared) .back',function(){
