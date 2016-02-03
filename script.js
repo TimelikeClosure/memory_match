@@ -39,6 +39,12 @@ var cardData = {
             alt: 'No Armor',
             match: 'self'
         },
+        bucket_empty: {
+            name: 'bucket_empty',
+            src: 'images/item_bucket_empty.png',
+            alt: 'Empty Iron Bucket',
+            match: 'self'
+        },
         fluid_lava: {
             name: 'fluid_lava',
             src: 'images/item_fluid_lava.gif',
@@ -154,6 +160,12 @@ var cardData = {
             src: 'images/texture_block_diamond_ore.png',
             alt: 'Diamond Ore Block',
             depth: 6
+        },
+        obsidian: {
+            name: 'obsidian',
+            src: 'images/texture_block_obsidian.png',
+            alt: 'Obsidian Block',
+            depth: 7
         }
     },
 
@@ -182,8 +194,8 @@ var cardData = {
 
 var gameHandler = {
     currentGame: {
-        rows: 4,
-        columns: 6,
+        rows: 8,
+        columns: 8,
         totalMatches: function(){
             return this.rows * this.columns / 2;
         },

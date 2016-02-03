@@ -92,7 +92,7 @@ main.lose #game-area,main.win #game-area {
 .card {
     flex: 0 0 auto;
     position: relative;
-    width: 16.6%;
+    width: 12.5%;
     background-image: url("images/texture_bedrock.png");
     background-size: 100%;
     user-select: none;
