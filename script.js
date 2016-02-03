@@ -57,6 +57,78 @@ var cardData = {
             alt: 'Water Source',
             match: 'fluid_lava'
         },
+        monster_cave_spider: {
+            name: 'monster_cave_spider',
+            src: 'images/monster_cave_spider.png',
+            alt: 'Cave Spider',
+            match: 'self'
+        },
+        monster_chicken_jockey: {
+            name: 'monster_chicken_jockey',
+            src: 'images/monster_chicken_jockey.png',
+            alt: 'Chicken Jockey',
+            match: 'self'
+        },
+        monster_creeper: {
+            name: 'monster_creeper',
+            src: 'images/monster_creeper.png',
+            alt: 'Creeper',
+            match: 'self'
+        },
+        monster_enderman: {
+            name: 'monster_enderman',
+            src: 'images/monster_enderman.png',
+            alt: 'Enderman',
+            match: 'self'
+        },
+        monster_silverfish: {
+            name: 'monster_silverfish',
+            src: 'images/monster_silverfish.png',
+            alt: 'Silverfish',
+            match: 'self'
+        },
+        monster_skeleton: {
+            name: 'monster_skeleton',
+            src: 'images/monster_skeleton.png',
+            alt: 'Skeleton',
+            match: 'self'
+        },
+        monster_slime: {
+            name: 'monster_slime',
+            src: 'images/monster_slime.png',
+            alt: 'Slime',
+            match: 'self'
+        },
+        monster_spider: {
+            name: 'monster_spider',
+            src: 'images/monster_spider.png',
+            alt: 'Spider',
+            match: 'self'
+        },
+        monster_spider_jockey: {
+            name: 'monster_spider_jockey',
+            src: 'images/monster_spider_jockey.png',
+            alt: 'Spider Jockey',
+            match: 'self'
+        },
+        monster_zombie: {
+            name: 'monster_zombie',
+            src: 'images/monster_zombie.png',
+            alt: 'Zombie',
+            match: 'self'
+        },
+        monster_zombie_pigman: {
+            name: 'monster_zombie_pigman',
+            src: 'images/monster_zombie_pigman.png',
+            alt: 'Zonbie Pigman',
+            match: 'self'
+        },
+        monster_zombie_villager: {
+            name: 'monster_zombie_villager',
+            src: 'images/monster_zombie_villager.png',
+            alt: 'Zonbie Villager',
+            match: 'self'
+        },
         pickaxe_diamond: {
             name: 'pickaxe_diamond',
             src: 'images/item_pickaxe_diamond.png',
