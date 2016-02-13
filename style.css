@@ -129,6 +129,32 @@ main.win .card,main.lose .card {
 .back>img {
     width: 100%;
 }
+.back>div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-size: 100%;
+    background-image: none;
+    z-index: 2;
+}
+@keyframes see-block {
+    0% {background-color: black; opacity: 0.5}
+    100% {background-color: black; opacity: 0}
+}
+.card.appearing .back>div {
+    animation-name: see-block;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
+}
+.card:not(.breakable) .back>div {
+    background-color: black;
+    opacity: 0.5;
+}
+#game-area:not(.freeze-flips) .card.breakable:not(.flipped):not(.cleared):hover .back>div {
+    border: 1px solid black;
+}
 @keyframes break-block {
     0% {background-image: none;}
     10%  {background-image: url(images/texture_break_0.png);}
@@ -141,23 +167,6 @@ main.win .card,main.lose .card {
     80%  {background-image: url(images/texture_break_7.png);}
     90%  {background-image: url(images/texture_break_8.png);}
     100%  {background-image: url(images/texture_break_9.png);}
-}
-.back>div {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-size: 100%;
-    background-image: none;
-    z-index: 2;
-}
-#game-area .card:not(.breakable) .back>div {
-    background-color: black;
-    opacity: 0.5;
-}
-#game-area:not(.freeze-flips) .card.breakable:not(.flipped):not(.cleared):hover .back>div {
-    border: 1px solid black;
 }
 #game-area:not(.freeze-flips) .card.breakable:hover:active .back {
     transition-delay: 1s;

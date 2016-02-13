@@ -417,12 +417,16 @@ var gameHandler = {
             return false;
         },
 
-        setBreakable: function(cardSet) {
+        setCheckBreakableAll: function(cardSet) {
             for (var i = 0; i < cardSet.length; i++) {
                 if (this.checkBreakable(cardSet.eq(i))) {
-                    cardSet.eq(i).addClass('breakable');
+                    var card = cardSet.eq(i);
+                    card.addClass('appearing');
                 }
             }
+            setTimeout(function(){
+                $('.appearing').addClass('breakable').removeClass('appearing');
+            }, 1000);
         },
 
         /**
@@ -724,7 +728,7 @@ var gameHandler = {
             return this.currentGame.freezeFlips(true);
         }
         this.currentGame.clearCards(flippedCards);
-        this.currentGame.setBreakable($('.card:not(.breakable):not(.cleared)'));
+        this.currentGame.setCheckBreakableAll($('.card:not(.breakable):not(.cleared)'));
         if (this.checkWinConditions()) {
             setTimeout(function(){gameHandler.gameWon();},2000);
             return this.currentGame.freezeFlips(true);
@@ -817,7 +821,7 @@ var gameHandler = {
 $(document).ready(function(){
     gameHandler.displayAllStats();
     $('.card,.card img').attr({'draggable': 'false'});
-    gameHandler.currentGame.setBreakable($('.card:not(.breakable):not(.cleared)'));
+    gameHandler.currentGame.setCheckBreakableAll($('.card:not(.breakable):not(.cleared)'));
 
     $('#game-area').on('mouseenter','.card:not(.breakable):not(.cleared) .back',function(){
         if (gameHandler.currentGame.checkBreakable($(this).parent())) {
