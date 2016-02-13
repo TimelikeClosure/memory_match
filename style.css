@@ -82,7 +82,7 @@ main.win::before {
     justify-content: center;
     align-items: flex-start;
     align-content: flex-start;
-    overflow: scroll;
+    overflow: auto;
     -webkit-user-select: none;
     user-select: none;
 }
@@ -126,10 +126,6 @@ main.win .card,main.lose .card {
     -webkit-user-select: none;
     user-select: none;
 }
-#game-area:not(.freeze-flips) .card.breakable:hover:active .back {
-    transition-delay: 1s;
-    opacity: 0;
-}
 .back>img {
     width: 100%;
 }
@@ -155,6 +151,17 @@ main.win .card,main.lose .card {
     background-size: 100%;
     background-image: none;
     z-index: 2;
+}
+#game-area .card:not(.breakable) .back>div {
+    background-color: black;
+    opacity: 0.5;
+}
+#game-area:not(.freeze-flips) .card.breakable:not(.flipped):not(.cleared):hover .back>div {
+    border: 1px solid black;
+}
+#game-area:not(.freeze-flips) .card.breakable:hover:active .back {
+    transition-delay: 1s;
+    opacity: 0;
 }
 #game-area:not(.freeze-flips) .card.breakable:hover:active .back>div {
     animation-name: break-block;
