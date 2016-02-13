@@ -417,6 +417,14 @@ var gameHandler = {
             return false;
         },
 
+        setBreakable: function(cardSet) {
+            for (var i = 0; i < cardSet.length; i++) {
+                if (this.checkBreakable(cardSet.eq(i))) {
+                    cardSet.eq(i).addClass('breakable');
+                }
+            }
+        },
+
         /**
          * If the given card back is transparent, returns true, otherwise false.
          * @param {Object} cardBack
@@ -716,6 +724,7 @@ var gameHandler = {
             return this.currentGame.freezeFlips(true);
         }
         this.currentGame.clearCards(flippedCards);
+        this.currentGame.setBreakable($('.card:not(.breakable):not(.cleared)'));
         if (this.checkWinConditions()) {
             setTimeout(function(){gameHandler.gameWon();},2000);
             return this.currentGame.freezeFlips(true);
@@ -808,6 +817,7 @@ var gameHandler = {
 $(document).ready(function(){
     gameHandler.displayAllStats();
     $('.card,.card img').attr({'draggable': 'false'});
+    gameHandler.currentGame.setBreakable($('.card:not(.breakable):not(.cleared)'));
 
     $('#game-area').on('mouseenter','.card:not(.breakable):not(.cleared) .back',function(){
         if (gameHandler.currentGame.checkBreakable($(this).parent())) {
