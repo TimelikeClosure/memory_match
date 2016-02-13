@@ -417,6 +417,10 @@ var gameHandler = {
             return false;
         },
 
+        /**
+         * Checks the given card set for breakable cards, then marks them as breakable
+         * @param {Object} cardSet
+         */
         setCheckBreakableAll: function(cardSet) {
             for (var i = 0; i < cardSet.length; i++) {
                 if (this.checkBreakable(cardSet.eq(i))) {
@@ -802,6 +806,7 @@ var gameHandler = {
         this.currentGame.currentMatchAttempts = 0;
         this.currentGame.currentMatches = 0;
         $('.card').removeClass('cleared').removeClass('flipped').removeClass('breakable');
+        this.currentGame.setCheckBreakableAll($('.card:not(.breakable):not(.cleared)'));
         this.displayAllStats();
         this.currentGame.freezeFlips(false);
     }
