@@ -69,13 +69,22 @@ main.win::before {
     background-color: gray;
     z-index: 0;
 }
+.game-container {
+    position: relative;
+    height: 95%;
+    width: 60%;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
 /*Game Area - index.html*/
 
 #game-area {
     position: relative;
     height: 95%;
-    width: 60%;
+    width: 100%;
     align-self: flex-start;
     display: flex;
     flex-flow: row wrap;
@@ -200,6 +209,38 @@ main.win .game-message {
     background-image: url(images/game_win.png);
 }
 
+/*Game HUD - index.html*/
+
+.game-hud {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.armor-breath-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.health-hunger-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.hotkey-bar-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.hotkey-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-image: url(images/ui_hotbar.png);
+}
+.hotkey {
+    height: 44px;
+    width: 44px;
+}
 
 /*Contact Section - about.html*/
 
