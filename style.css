@@ -71,12 +71,13 @@ main.win::before {
 }
 .game-container {
     position: relative;
-    height: 95%;
+    height: 98%;
     width: 60%;
     align-self: flex-start;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items: center;
 }
 
 /*Game Area - index.html*/
@@ -212,74 +213,61 @@ main.win .game-message {
 /*Game HUD - index.html*/
 
 .game-hud {
+    width: 42%;
+    margin-top: 1%;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-content: stretch;
 }
-.armor-breath-row {
+.armor-breath-row,.health-hunger-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
-.armor-bar {
+.armor-bar,.health-bar {
+    width: 45%;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
 }
-.armor {
-    height: 20px;
-    width: 20px;
-    background-size: 100%;
-}
-.armor-full {
-    background-image: url(images/ui_armor_full.png);
-}
-.health-hunger-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-.health-bar {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-}
-.heart {
-    height: 20px;
-    width: 20px;
-    background-size: 100%;
-}
-.heart-full {
-    background-image: url(images/ui_heart_full.png);
-}
-.hunger-bar {
+.breath-bar,.hunger-bar {
+    width: 45%;
     display: flex;
     flex-direction: row-reverse;
     justify-content: flex-start;
 }
-.hunger {
-    height: 20px;
-    width: 20px;
-    background-size: 100%;
+
+.armor-bar,.breath-bar {
+    margin-bottom: 3%;
 }
-.hunger-full {
-    background-image: url(images/ui_hunger_full.png);
+.health-bar,.hunger-bar {
+    margin-bottom: 3%;
+}
+.armor,.breath,.heart,.hunger {
+    width: 10%;
+}
+.armor img,.breath img,.heart img,.hunger img {
+    width: 110%;
 }
 .hotkey-bar-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+    position: relative;
+}
+.hotkey-bar-row img {
+    width: 100%;
 }
 .hotkey-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    background-image: url(images/ui_hotbar.png);
 }
 .hotkey {
-    height: 44px;
-    width: 44px;
+    height: 100%;
 }
 
 /*Contact Section - about.html*/
