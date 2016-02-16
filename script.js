@@ -315,9 +315,7 @@ var gameHandler = {
          * @returns {boolean} true if index is a valid card index, false otherwise
          */
         checkValidIndex: function(index) {
-            var rows = this.rows;
-            var columns = this.columns;
-            return (index >= 0 && index < rows * columns);
+            return (index >= 0 && index < this.rows * this.columns);
         },
 
         /**
@@ -326,12 +324,7 @@ var gameHandler = {
          * @returns {boolean} true if position is legal, false otherwise
          */
         checkValidPosition: function(position) {
-            var rows = this.rows;
-            var columns = this.columns;
-            if (position[0] >= 0 && position[0] < columns && position[1] >=0 && position[1] < rows) {
-                return true;
-            }
-            return false;
+            return (position[0] >= 0 && position[0] < this.columns && position[1] >=0 && position[1] < this.rows);
         },
 
 
@@ -341,7 +334,6 @@ var gameHandler = {
          * @returns {null|Array} array of zero-based column and row positions
          */
         getPositionFromIndex: function(index) {
-            var rows = this.rows;
             var columns = this.columns;
             if (!this.checkValidIndex(index)) {
                 return null;
