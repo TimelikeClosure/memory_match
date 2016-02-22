@@ -1,4 +1,30 @@
 
+/*Global defaults - All Pages*/
+
+@font-face {
+    font-family: Minecraftia;
+    src: url(fonts/Minecraftia.ttf);
+}
+
+body * {
+    font-family: Minecraftia;
+}
+
+.minecraft-btn {
+    outline: 2px solid black;
+    background-image: url(images/button_center.png);
+    background-repeat: repeat;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    text-shadow: 3px 3px #4C4C4C;
+    box-sizing: border-box;
+    border-bottom: 4px solid #565656;
+    border-right: 2px solid #565656;
+    border-left: 2px solid #AAA;
+    border-top: 2px solid #AAA;
+}
+
 /*Header Section - All Pages*/
 
 #header_section {
@@ -64,11 +90,45 @@ main.win::before {
     flex-direction: column;
     justify-content: space-between;
     align-items: stretch;
+    overflow: auto;
     height: 90%;
     width: 20%;
-    background-color: gray;
+    background-color: rgba(16, 11, 7, 0.9);
     z-index: 0;
 }
+
+.stats_category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.stats_category .label {
+    font-size: 12px;
+}
+
+.stats_category .value {
+    font-size: 12px;
+    flex-shrink: 0;
+    width: 90%;
+}
+
+.stats_category .value table {
+    width: 100%;
+}
+
+.stats_category .value tr:nth-of-type(odd) {
+    color: #FEFEFE;
+}
+.stats_category .value tr:nth-of-type(even) {
+    color: #909090;
+}
+
+.stats_category .value tr>td:last-child,.stats_category .value tr>th:last-child{
+    text-align: right;
+}
+
 .game-container {
     position: relative;
     height: 98%;
