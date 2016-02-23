@@ -105,11 +105,11 @@ main.win::before {
 }
 
 .stats_category .label {
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .stats_category .value {
-    font-size: 12px;
+    font-size: 16px;
     flex-shrink: 0;
     width: 90%;
 }
