@@ -70,11 +70,12 @@ main {
     width: 100vw;
     background-color: #926E40;
     background-position: center;
-    background-size: cover;
+    #background-size: cover;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
+    background-image: url("http://www.transparenttextures.com/patterns/asfalt-light.png");
 }
 main::before {
     content: ' ';
