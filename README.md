@@ -8,8 +8,9 @@ Link to [latest stable version](http://staging.matchcraft.timhoristjr.com).
 
 ## Feature List
 
-  * Minecraft themed game of concentration
-  * Digging progression mechanic
+  * Minecraft themed game of concentration.
+  * Digging progression mechanic.
+  * Basic statistics tracking.
 
 ### Planned additions
 
