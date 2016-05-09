@@ -7,12 +7,16 @@
 }
 
 body * {
-    font-family: Minecraftia;
+    font-family: Minecraftia, sans-serif;
 }
 
 .minecraft-btn {
     display: block;
     height: 40px;
+    -webkit-outline: 2px solid black;
+    -moz-outline: 2px solid black;
+    -ms-outline: 2px solid black;
+    -o-outline: 2px solid black;
     outline: 2px solid black;
     background-image: url(images/button_center.png);
     background-repeat: repeat;
@@ -20,6 +24,10 @@ body * {
     color: white;
     font-size: 16px;
     text-decoration: none;
+    -webkit-text-shadow: 3px 3px #4C4C4C;
+    -moz-text-shadow: 3px 3px #4C4C4C;
+    -ms-text-shadow: 3px 3px #4C4C4C;
+    -o-text-shadow: 3px 3px #4C4C4C;
     text-shadow: 3px 3px #4C4C4C;
     box-sizing: border-box;
     border-bottom: 4px solid #565656;
@@ -39,9 +47,25 @@ body * {
     height: 20vh;
     width: 100vw;
     background-color: lightcyan;
+    -webkit-display: flex;
+    -moz-display: flex;
+    -ms-display: flex;
+    -o-display: flex;
     display: flex;
+    -webkit-flex-direction: row;
+    -moz-flex-direction: row;
+    -ms-flex-direction: row;
+    -o-flex-direction: row;
     flex-direction: row;
+    -webkit-justify-content: space-between;
+    -moz-justify-content: space-between;
+    -ms-justify-content: space-between;
+    -o-justify-content: space-between;
     justify-content: space-between;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    -ms-align-items: center;
+    -o-align-items: center;
     align-items: center;
 }
 .game-logo {
@@ -53,9 +77,25 @@ body * {
 .links {
     height: 75%;
     width: 25%;
+    -webkit-display: flex;
+    -moz-display: flex;
+    -ms-display: flex;
+    -o-display: flex;
     display: flex;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    -ms-flex-direction: column;
+    -o-flex-direction: column;
     flex-direction: column;
+    -webkit-justify-content: space-around;
+    -moz-justify-content: space-around;
+    -ms-justify-content: space-around;
+    -o-justify-content: space-around;
     justify-content: space-around;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    -ms-align-items: center;
+    -o-align-items: center;
     align-items: center;
 }
 .links a {
@@ -63,7 +103,15 @@ body * {
 }
 @media (max-width: 1034px) {
     #header_section {
+        -webkit-flex-direction: column;
+        -moz-flex-direction: column;
+        -ms-flex-direction: column;
+        -o-flex-direction: column;
         flex-direction: column;
+        -webkit-justify-content: space-around;
+        -moz-justify-content: space-around;
+        -ms-justify-content: space-around;
+        -o-justify-content: space-around;
         justify-content: space-around;
     }
     .game-logo {
@@ -71,6 +119,10 @@ body * {
         max-width: 400px;
     }
     .links {
+        -webkit-flex-direction: row;
+        -moz-flex-direction: row;
+        -ms-flex-direction: row;
+        -o-flex-direction: row;
         flex-direction: row;
         height: auto;
     }
@@ -85,7 +137,6 @@ main {
     width: 100vw;
     background-color: #926E40;
     background-position: center;
-    #background-size: cover;
     -webkit-display: flex;
     -moz-display: flex;
     -ms-display: flex;
@@ -142,11 +193,17 @@ main::before {
 main.lose::before {
     background-image: url(images/surrounded_by_endermen.jpg);
     opacity: 1;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
     transition-duration: 1s;
 }
 main.win::before {
     background-image: url(images/raining_diamonds.jpg);
     opacity: 1;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
     transition-duration: 1s;
 }
 
@@ -174,6 +231,10 @@ main.win::before {
     overflow: auto;
     height: 90%;
     width: 20%;
+    -webkit-outline: 2px solid black;
+    -moz-outline: 2px solid black;
+    -ms-outline: 2px solid black;
+    -o-outline: 2px solid black;
     outline: 2px solid black;
     background-color: rgba(16, 11, 7, 0.9);
     z-index: 0;
@@ -236,6 +297,10 @@ main.win::before {
     position: relative;
     height: 98%;
     width: 60%;
+    -webkit-align-self: flex-start;
+    -moz-align-self: flex-start;
+    -ms-align-self: flex-start;
+    -o-align-self: flex-start;
     align-self: flex-start;
     -webkit-display: flex;
     -moz-display: flex;
@@ -307,6 +372,8 @@ main.win::before {
     align-content: flex-start;
     overflow: auto;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 main.lose #game-area,main.win #game-area {
@@ -323,6 +390,8 @@ main.lose #game-area,main.win #game-area {
     background-image: url("images/texture_bedrock.png");
     background-size: 100%;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 main.win .card,main.lose .card {
@@ -333,6 +402,8 @@ main.win .card,main.lose .card {
     width: 100%;
     height: 100%;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 .front>img {
@@ -340,6 +411,8 @@ main.win .card,main.lose .card {
     max-width: 100%;
     max-height: 100%;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 .card.cleared .front {
@@ -350,8 +423,14 @@ main.win .card,main.lose .card {
     top: 0;
     width: 100%;
     opacity: 1;
+    -webkit-transition-delay: 0.01s;
+    -moz-transition-delay: 0.01s;
+    -ms-transition-delay: 0.01s;
+    -o-transition-delay: 0.01s;
     transition-delay: 0.01s;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 .back>img {
@@ -372,8 +451,17 @@ main.win .card,main.lose .card {
     100% {background-color: black; opacity: 0}
 }
 .card.appearing .back>div {
+    -webkit-animation-name: see-block;
+    -moz-animation-name: see-block;
+    -o-animation-name: see-block;
     animation-name: see-block;
+    -webkit-animation-duration: 1s;
+    -moz-animation-duration: 1s;
+    -o-animation-duration: 1s;
     animation-duration: 1s;
+    -webkit-animation-iteration-count: 1;
+    -moz-animation-iteration-count: 1;
+    -o-animation-iteration-count: 1;
     animation-iteration-count: 1;
 }
 .card:not(.breakable) .back>div {
@@ -397,11 +485,21 @@ main.win .card,main.lose .card {
     100%  {background-image: url(images/texture_break_9.png);}
 }
 #game-area:not(.freeze-flips) .card.breakable:hover:active .back {
+    -webkit-transition-delay: 1s;
+    -moz-transition-delay: 1s;
+    -ms-transition-delay: 1s;
+    -o-transition-delay: 1s;
     transition-delay: 1s;
     opacity: 0;
 }
 #game-area:not(.freeze-flips) .card.breakable:hover:active .back>div {
+    -webkit-animation-name: break-block;
+    -moz-animation-name: break-block;
+    -o-animation-name: break-block;
     animation-name: break-block;
+    -webkit-animation-duration: 1s;
+    -moz-animation-duration: 1s;
+    -o-animation-duration: 1s;
     animation-duration: 1s;
 }
 .card.flipped .back,.card.cleared .back {
