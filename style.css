@@ -242,6 +242,7 @@ main.win::before {
 @media (max-width: 1034px) {
     #stats_section,.contact-section {
         width: 80%;
+        height: auto;
     }
 }
 
