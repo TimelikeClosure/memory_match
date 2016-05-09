@@ -325,6 +325,7 @@ main.win::before {
 }
 @media (max-width: 1034px) {
     .game-container {
+        min-height: 80vh;
         width: 80%;
         -webkit-align-self: auto;
         -moz-align-self: auto;
