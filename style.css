@@ -157,7 +157,7 @@ main {
     -ms-align-items: center;
     -o-align-items: center;
     align-items: center;
-    background-image: url("http://www.transparenttextures.com/patterns/asfalt-light.png");
+    background-image: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
 }
 main::before {
     content: ' ';
